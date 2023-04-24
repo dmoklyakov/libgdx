@@ -132,8 +132,10 @@ public class DecalBatch implements Disposable {
 
 	/** Flush this batch sending all contained decals to GL. After flushing the batch is empty once again. */
 	public void flush () {
-		render();
-		clear();
+		if (!groupList.isEmpty()) {
+			render();
+			clear();
+		}
 	}
 
 	/** Renders all decals to the buffer and flushes the buffer to the GL when full/done */
