@@ -80,6 +80,8 @@ public class Table extends WidgetGroup {
 	Array<DebugRect> debugRects;
 
 	@Null Drawable background;
+	@Null Drawable foreground;
+	private Color foregroundColor = new Color(1f, 1f, 1f, 1f);
 	private boolean clip;
 	private @Null Skin skin;
 	boolean round = true;
@@ -120,10 +122,12 @@ public class Table extends WidgetGroup {
 				}
 			} else
 				drawChildren(batch, parentAlpha);
+			drawForeground(batch, parentAlpha, 0, 0);
 			resetTransform(batch);
 		} else {
 			drawBackground(batch, parentAlpha, getX(), getY());
 			super.draw(batch, parentAlpha);
+			drawForeground(batch, parentAlpha, getX(), getY());
 		}
 	}
 
@@ -136,12 +140,29 @@ public class Table extends WidgetGroup {
 		background.draw(batch, x, y, getWidth(), getHeight());
 	}
 
+	protected void drawForeground (Batch batch, float parentAlpha, float x, float y) {
+		if (foreground == null) return;
+		Color color = getForegroundColor();
+		float bgAlpha = getColor().a;
+		batch.setColor(color.r, color.g, color.b, color.a * parentAlpha * bgAlpha);
+		foreground.draw(batch, x, y, getWidth(), getHeight());
+	}
+
+	public Color getForegroundColor () {
+		return foregroundColor;
+	}
+
 	/** Sets the background drawable from the skin and adjusts the table's padding to match the background. This may only be called
 	 * if a skin has been set with {@link Table#Table(Skin)} or {@link #setSkin(Skin)}.
 	 * @see #setBackground(Drawable) */
 	public void setBackground (String drawableName) {
 		if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
 		setBackground(skin.getDrawable(drawableName));
+	}
+
+	public void setForeground (String drawableName) {
+		if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+		setForeground(skin.getDrawable(drawableName));
 	}
 
 	/** @param background May be null to clear the background. */
@@ -154,6 +175,11 @@ public class Table extends WidgetGroup {
 			invalidateHierarchy();
 		else if (padTopOld != padTopNew || padLeftOld != padLeftNew || padBottomOld != padBottomNew || padRightOld != padRightNew)
 			invalidate();
+	}
+
+	public void setForeground (@Null Drawable foreground) {
+		if (this.foreground == foreground) return;
+		this.foreground = foreground; // The default pad values use the background's padding.
 	}
 
 	/** @see #setBackground(Drawable) */
@@ -170,6 +196,10 @@ public class Table extends WidgetGroup {
 
 	public @Null Drawable getBackground () {
 		return background;
+	}
+
+	public @Null Drawable getForeground () {
+		return foreground;
 	}
 
 	public @Null Actor hit (float x, float y, boolean touchable) {

@@ -169,6 +169,7 @@ public class Button extends Table implements Disableable {
 		this.style = style;
 
 		setBackground(getBackgroundDrawable());
+		setForeground(getForegroundDrawable());
 	}
 
 	/** Returns the button's style. Modifying the returned style may not have an effect until {@link #setStyle(ButtonStyle)} is
@@ -206,10 +207,34 @@ public class Button extends Table implements Disableable {
 		return style.up;
 	}
 
+	protected @Null Drawable getForegroundDrawable () {
+		if (isDisabled() && style.fgDisabled != null) return style.fgDisabled;
+		if (isPressed()) {
+			if (isChecked() && style.checkedDown != null) return style.checkedDown;
+			if (style.fgDown != null) return style.fgDown;
+		}
+		if (isOver()) {
+			if (isChecked()) {
+				if (style.checkedOver != null) return style.checkedOver;
+			} else {
+				if (style.fgOver != null) return style.fgOver;
+			}
+		}
+		boolean focused = hasKeyboardFocus();
+		if (isChecked()) {
+			if (focused && style.checkedFocused != null) return style.checkedFocused;
+			if (style.checked != null) return style.checked;
+			if (isOver() && style.fgOver != null) return style.fgOver;
+		}
+		if (focused && style.fgFocused != null) return style.fgFocused;
+		return style.fgUp;
+	}
+
 	public void draw (Batch batch, float parentAlpha) {
 		validate();
 
 		setBackground(getBackgroundDrawable());
+		setForeground(getForegroundDrawable());
 
 		float offsetX = 0, offsetY = 0;
 		if (isPressed() && !isDisabled()) {
@@ -244,6 +269,8 @@ public class Button extends Table implements Disableable {
 		float width = super.getPrefWidth();
 		if (style.up != null) width = Math.max(width, style.up.getMinWidth());
 		if (style.down != null) width = Math.max(width, style.down.getMinWidth());
+		if (style.fgUp != null) width = Math.max(width, style.fgUp.getMinWidth());
+		if (style.fgDown != null) width = Math.max(width, style.fgDown.getMinWidth());
 		if (style.checked != null) width = Math.max(width, style.checked.getMinWidth());
 		return width;
 	}
@@ -252,6 +279,8 @@ public class Button extends Table implements Disableable {
 		float height = super.getPrefHeight();
 		if (style.up != null) height = Math.max(height, style.up.getMinHeight());
 		if (style.down != null) height = Math.max(height, style.down.getMinHeight());
+		if (style.fgUp != null) height = Math.max(height, style.fgUp.getMinHeight());
+		if (style.fgDown != null) height = Math.max(height, style.fgDown.getMinHeight());
 		if (style.checked != null) height = Math.max(height, style.checked.getMinHeight());
 		return height;
 	}
@@ -268,6 +297,7 @@ public class Button extends Table implements Disableable {
 	 * @author mzechner */
 	static public class ButtonStyle {
 		public @Null Drawable up, down, over, focused, disabled;
+		public @Null Drawable fgUp, fgDown, fgOver, fgFocused, fgDisabled;
 		public @Null Drawable checked, checkedOver, checkedDown, checkedFocused;
 		public float pressedOffsetX, pressedOffsetY, unpressedOffsetX, unpressedOffsetY, checkedOffsetX, checkedOffsetY;
 
@@ -286,6 +316,11 @@ public class Button extends Table implements Disableable {
 			over = style.over;
 			focused = style.focused;
 			disabled = style.disabled;
+			fgUp = style.fgUp;
+			fgDown = style.fgDown;
+			fgOver = style.fgOver;
+			fgFocused = style.fgFocused;
+			fgDisabled = style.fgDisabled;
 
 			checked = style.checked;
 			checkedOver = style.checkedOver;
