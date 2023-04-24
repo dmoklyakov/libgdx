@@ -1628,6 +1628,14 @@ public class Matrix4 implements Serializable {
 		return this;
 	}
 
+	/** Postmultiplies this matrix with a scale matrix. Postmultiplication is also used by OpenGL ES' 1.x
+	 * glTranslate/glRotate/glScale.
+	 * @param scale The vector to scale the matrix by.
+	 * @return This matrix for the purpose of chaining methods together. */
+	public Matrix4 scale (Vector3 scale) {
+		return scale(scale.x, scale.y, scale.z);
+	}
+
 	/** Copies the 4x3 upper-left sub-matrix into float array. The destination array is supposed to be a column major matrix.
 	 * @param dst the destination matrix */
 	public void extract4x3Matrix (float[] dst) {
