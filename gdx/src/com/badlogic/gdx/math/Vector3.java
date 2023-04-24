@@ -108,6 +108,33 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.set(vector.x, vector.y, z);
 	}
 
+	/** Sets the x-component.
+	 *
+	 * @param x The x-component
+	 * @return This vector for chaining */
+	public Vector3 setX(float x) {
+		this.x = x;
+		return this;
+	}
+
+	/** Sets the y-component.
+	 *
+	 * @param y The y-component
+	 * @return This vector for chaining */
+	public Vector3 setY(float y) {
+		this.y = y;
+		return this;
+	}
+
+	/** Sets the z-component.
+	 *
+	 * @param z The z-component
+	 * @return This vector for chaining */
+	public Vector3 setZ(float z) {
+		this.z = z;
+		return this;
+	}
+
 	/** Sets the components from the given spherical coordinate
 	 * @param azimuthalAngle The angle between x-axis in radians [0, 2pi]
 	 * @param polarAngle The angle between z-axis in radians [0, pi]

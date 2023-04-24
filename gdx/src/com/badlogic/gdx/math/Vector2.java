@@ -93,6 +93,24 @@ public class Vector2 implements Serializable, Vector<Vector2> {
 		return this;
 	}
 
+	/** Sets the x-component.
+	 *
+	 * @param x The x-component
+	 * @return This vector for chaining */
+	public Vector2 setX(float x) {
+		this.x = x;
+		return this;
+	}
+
+	/** Sets the y-component.
+	 *
+	 * @param y The y-component
+	 * @return This vector for chaining */
+	public Vector2 setY(float y) {
+		this.y = y;
+		return this;
+	}
+
 	@Override
 	public Vector2 sub (Vector2 v) {
 		x -= v.x;
