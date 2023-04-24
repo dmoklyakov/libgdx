@@ -84,6 +84,13 @@ public class Label extends Widget {
 		invalidateHierarchy();
 	}
 
+	public void setFont(BitmapFont font) {
+		if (font == null) throw new IllegalArgumentException("Missing font.");
+		this.style.font = font;
+		cache = font.newFontCache();
+		invalidateHierarchy();
+	}
+
 	/** Returns the label's style. Modifying the returned style may not have an effect until {@link #setStyle(LabelStyle)} is
 	 * called. */
 	public LabelStyle getStyle () {
