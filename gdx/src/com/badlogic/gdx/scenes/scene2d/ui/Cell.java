@@ -438,6 +438,20 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
+	public Cell<T> padVertical (Value pad) {
+		if (pad == null) throw new IllegalArgumentException("pad cannot be null.");
+		padTop = pad;
+		padBottom = pad;
+		return this;
+	}
+
+	public Cell<T> padHorizontal (Value pad) {
+		if (pad == null) throw new IllegalArgumentException("pad cannot be null.");
+		padLeft = pad;
+		padRight = pad;
+		return this;
+	}
+
 	/** Sets the padTop, padLeft, padBottom, and padRight to the specified value. */
 	public Cell<T> pad (float pad) {
 		pad(Fixed.valueOf(pad));
@@ -467,6 +481,14 @@ public class Cell<T extends Actor> implements Poolable {
 	public Cell<T> padRight (float padRight) {
 		this.padRight = Fixed.valueOf(padRight);
 		return this;
+	}
+
+	public Cell<T> padVertical (float pad) {
+		return padVertical(Fixed.valueOf(pad));
+	}
+
+	public Cell<T> padHorizontal (float pad) {
+		return padHorizontal(Fixed.valueOf(pad));
 	}
 
 	/** Sets fillX and fillY to 1. */
