@@ -31,11 +31,11 @@ import com.badlogic.gdx.tools.hiero.unicodefont.UnicodeFont.RenderType;
 public class Glyph {
 	private int codePoint;
 	private short width, height;
-	private short yOffset;
+	private float yOffset;
 	private boolean isMissing;
 	private Shape shape;
 	float u, v, u2, v2;
-	private int xOffset, xAdvance;
+	private float xOffset, xAdvance;
 	Texture texture;
 
 	Glyph (int codePoint, Rectangle bounds, GlyphVector vector, int index, UnicodeFont unicodeFont) {
@@ -52,7 +52,7 @@ public class Glyph {
 				boolean empty = g.width == 0 || g.height == 0;
 				width = empty ? 0 : (short)(g.width + padLeft + padRight);
 				height = empty ? 0 : (short)(g.height + padTop + padBottom);
-				yOffset = (short)(g.yoffset - padTop);
+				yOffset = g.yoffset - padTop;
 				xOffset = g.xoffset - unicodeFont.getPaddingLeft();
 				xAdvance = g.xadvance + unicodeFont.getPaddingAdvanceX() + unicodeFont.getPaddingLeft()
 					+ unicodeFont.getPaddingRight();
@@ -71,7 +71,7 @@ public class Glyph {
 			if (glyphWidth > 0 && glyphHeight > 0) {
 				width = (short)(glyphWidth + padLeft + padRight);
 				height = (short)(glyphHeight + padTop + padBottom);
-				yOffset = (short)(unicodeFont.getAscent() + bounds.y - padTop);
+				yOffset = unicodeFont.getAscent() + bounds.y - padTop;
 			}
 
 			// xOffset and xAdvance will be incorrect for unicode characters such as combining marks or non-spacing characters
@@ -82,8 +82,8 @@ public class Glyph {
 				Font.LAYOUT_LEFT_TO_RIGHT);
 			GlyphMetrics charMetrics = charVector.getGlyphMetrics(0);
 			xOffset = charVector.getGlyphPixelBounds(0, GlyphPage.renderContext, 0, 0).x - unicodeFont.getPaddingLeft();
-			xAdvance = (int)(metrics.getAdvanceX() + unicodeFont.getPaddingAdvanceX() + unicodeFont.getPaddingLeft()
-				+ unicodeFont.getPaddingRight());
+			xAdvance = metrics.getAdvanceX() + unicodeFont.getPaddingAdvanceX() + unicodeFont.getPaddingLeft()
+				+ unicodeFont.getPaddingRight();
 
 			shape = vector.getGlyphOutline(index, -bounds.x + unicodeFont.getPaddingLeft(), -bounds.y + unicodeFont.getPaddingTop());
 
@@ -149,15 +149,15 @@ public class Glyph {
 	}
 
 	/** The distance from drawing y location to top of this glyph, causing the glyph to sit on the baseline. */
-	public int getYOffset () {
+	public float getYOffset () {
 		return yOffset;
 	}
 
-	public int getXOffset () {
+	public float getXOffset () {
 		return xOffset;
 	}
 
-	public int getXAdvance () {
+	public float getXAdvance () {
 		return xAdvance;
 	}
 }

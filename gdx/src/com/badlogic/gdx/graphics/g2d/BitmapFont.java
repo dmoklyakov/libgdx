@@ -325,7 +325,7 @@ public class BitmapFont implements Disposable {
 	 * centering a score or loading percentage text, it will not jump around as different numbers are shown. */
 	public void setFixedWidthGlyphs (CharSequence glyphs) {
 		BitmapFontData data = this.data;
-		int maxAdvance = 0;
+		float maxAdvance = 0f;
 		for (int index = 0, end = glyphs.length(); index < end; index++) {
 			Glyph g = data.getGlyph(glyphs.charAt(index));
 			if (g != null && g.xadvance > maxAdvance) maxAdvance = g.xadvance;
@@ -333,7 +333,7 @@ public class BitmapFont implements Disposable {
 		for (int index = 0, end = glyphs.length(); index < end; index++) {
 			Glyph g = data.getGlyph(glyphs.charAt(index));
 			if (g == null) continue;
-			g.xoffset += (maxAdvance - g.xadvance) / 2;
+			g.xoffset += (maxAdvance - g.xadvance) / 2f;
 			g.xadvance = maxAdvance;
 			g.kerning = null;
 			g.fixedWidth = true;
@@ -395,27 +395,27 @@ public class BitmapFont implements Disposable {
 		public int srcY;
 		public int width, height;
 		public float u, v, u2, v2;
-		public int xoffset, yoffset;
-		public int xadvance;
-		public byte[][] kerning;
+		public float xoffset, yoffset;
+		public float xadvance;
+		public float[][] kerning;
 		public boolean fixedWidth;
 
 		/** The index to the texture page that holds this glyph. */
 		public int page = 0;
 
-		public int getKerning (char ch) {
+		public float getKerning (char ch) {
 			if (kerning != null) {
-				byte[] page = kerning[ch >>> LOG2_PAGE_SIZE];
+				float[] page = kerning[ch >>> LOG2_PAGE_SIZE];
 				if (page != null) return page[ch & PAGE_SIZE - 1];
 			}
-			return 0;
+			return 0f;
 		}
 
-		public void setKerning (int ch, int value) {
-			if (kerning == null) kerning = new byte[PAGES][];
-			byte[] page = kerning[ch >>> LOG2_PAGE_SIZE];
-			if (page == null) kerning[ch >>> LOG2_PAGE_SIZE] = page = new byte[PAGE_SIZE];
-			page[ch & PAGE_SIZE - 1] = (byte)value;
+		public void setKerning (int ch, float value) {
+			if (kerning == null) kerning = new float[PAGES][];
+			float[] page = kerning[ch >>> LOG2_PAGE_SIZE];
+			if (page == null) kerning[ch >>> LOG2_PAGE_SIZE] = page = new float[PAGE_SIZE];
+			page[ch & PAGE_SIZE - 1] = value;
 		}
 
 		public String toString () {
@@ -582,14 +582,14 @@ public class BitmapFont implements Disposable {
 					tokens.nextToken();
 					glyph.height = Integer.parseInt(tokens.nextToken());
 					tokens.nextToken();
-					glyph.xoffset = Integer.parseInt(tokens.nextToken());
+					glyph.xoffset = Float.parseFloat(tokens.nextToken());
 					tokens.nextToken();
 					if (flip)
-						glyph.yoffset = Integer.parseInt(tokens.nextToken());
+						glyph.yoffset = Float.parseFloat(tokens.nextToken());
 					else
-						glyph.yoffset = -(glyph.height + Integer.parseInt(tokens.nextToken()));
+						glyph.yoffset = -(glyph.height + Float.parseFloat(tokens.nextToken()));
 					tokens.nextToken();
-					glyph.xadvance = Integer.parseInt(tokens.nextToken());
+					glyph.xadvance = Float.parseFloat(tokens.nextToken());
 
 					// Check for page safely, it could be omitted or invalid.
 					if (tokens.hasMoreTokens()) tokens.nextToken();
@@ -618,7 +618,7 @@ public class BitmapFont implements Disposable {
 					if (first < 0 || first > Character.MAX_VALUE || second < 0 || second > Character.MAX_VALUE) continue;
 					Glyph glyph = getGlyph((char)first);
 					tokens.nextToken();
-					int amount = Integer.parseInt(tokens.nextToken());
+					float amount = Float.parseFloat(tokens.nextToken());
 					if (glyph != null) { // Kernings may exist for glyph pairs not contained in the font.
 						glyph.setKerning(second, amount);
 					}
@@ -667,7 +667,7 @@ public class BitmapFont implements Disposable {
 				}
 				if (spaceGlyph.width == 0) {
 					spaceGlyph.width = (int)(padLeft + spaceGlyph.xadvance + padRight);
-					spaceGlyph.xoffset = (int)-padLeft;
+					spaceGlyph.xoffset = -padLeft;
 				}
 				spaceXadvance = spaceGlyph.xadvance;
 

@@ -17,6 +17,7 @@
 package com.badlogic.gdx.tools.hiero;
 
 import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntFloatMap;
 import com.badlogic.gdx.utils.IntIntMap;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +37,7 @@ public class Kerning {
 	private int headOffset = -1;
 	private int kernOffset = -1;
 	private int gposOffset = -1;
-	private IntIntMap kernings = new IntIntMap();
+	private IntFloatMap kernings = new IntFloatMap();
 
 	/** @param inputStream The data for the TTF font.
 	 * @param fontSize The font size to use to determine kerning pixel offsets.
@@ -66,14 +67,14 @@ public class Kerning {
 
 	/** @return A map from pairs of glyph codes to their kerning in pixels. Each map key encodes two glyph codes: the high 16 bits
 	 *         form the first glyph code, and the low 16 bits form the second. */
-	public IntIntMap getKernings () {
+	public IntFloatMap getKernings () {
 		return kernings;
 	}
 
 	private void storeKerningOffset (int firstGlyphCode, int secondGlyphCode, int offset) {
 		// Scale the offset values using the font size.
-		int value = Math.round(offset * scale);
-		if (value == 0) {
+		float value = offset * scale;
+		if (value == 0f) {
 			return;
 		}
 		int key = (firstGlyphCode << 16) | secondGlyphCode;

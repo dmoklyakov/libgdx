@@ -19,6 +19,7 @@ package com.badlogic.gdx.scenes.scene2d.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -198,7 +199,7 @@ public class ImageTextButton extends Button {
 		public ImageTextButtonStyle () {
 		}
 
-		public ImageTextButtonStyle (@Null Drawable up, @Null Drawable down, @Null Drawable checked, BitmapFont font) {
+		public ImageTextButtonStyle (@Null Drawable up, @Null Drawable down, @Null Drawable checked, MsdfFont font) {
 			super(up, down, checked, font);
 		}
 

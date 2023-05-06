@@ -268,7 +268,7 @@ public class BitmapFontWriter {
 			for (int j = 0; j < glyphs.size; j++) {
 				Glyph first = glyphs.get(i);
 				Glyph second = glyphs.get(j);
-				int kern = first.getKerning((char)second.id);
+				float kern = first.getKerning((char)second.id);
 				if (kern != 0) {
 					kernCount++;
 					kernBuf.append(xmlTab).append(xmlOpen).append("kerning first=").append(quote(first.id)).append(" second=")

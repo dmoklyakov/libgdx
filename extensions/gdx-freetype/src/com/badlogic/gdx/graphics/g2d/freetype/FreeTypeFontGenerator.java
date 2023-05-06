@@ -468,7 +468,7 @@ public class FreeTypeFontGenerator implements Disposable {
 		Glyph spaceGlyph = data.getGlyph(' ');
 		if (spaceGlyph == null) {
 			spaceGlyph = new Glyph();
-			spaceGlyph.xadvance = (int)data.spaceXadvance + parameter.spaceX;
+			spaceGlyph.xadvance = data.spaceXadvance + parameter.spaceX;
 			spaceGlyph.id = (int)' ';
 			data.setGlyph(' ', spaceGlyph);
 		}
@@ -578,10 +578,10 @@ public class FreeTypeFontGenerator implements Disposable {
 		glyph.height = mainPixmap.getHeight();
 		glyph.xoffset = mainGlyph.getLeft();
 		if (parameter.flip)
-			glyph.yoffset = -mainGlyph.getTop() + (int)baseLine;
+			glyph.yoffset = -mainGlyph.getTop() + baseLine;
 		else
-			glyph.yoffset = -(glyph.height - mainGlyph.getTop()) - (int)baseLine;
-		glyph.xadvance = FreeType.toInt(metrics.getHoriAdvance()) + (int)parameter.borderWidth + parameter.spaceX;
+			glyph.yoffset = -(glyph.height - mainGlyph.getTop()) - baseLine;
+		glyph.xadvance = FreeType.toInt(metrics.getHoriAdvance()) + parameter.borderWidth + parameter.spaceX;
 
 		if (bitmapped) {
 			mainPixmap.setColor(Color.CLEAR);

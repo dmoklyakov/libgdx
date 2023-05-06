@@ -17,29 +17,49 @@
 package com.badlogic.gdx.scenes.scene2d.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfShader;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.StringBuilder;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 
 /** A text label, with optional word wrapping.
  * <p>
  * The preferred size of the label is determined by the actual text bounds, unless {@link #setWrap(boolean) word wrap} is enabled.
  * @author Nathan Sweet */
 public class Label extends Widget {
-	static private final Color tempColor = new Color();
+	static protected final Color tempColor = new Color();
 	static private final GlyphLayout prefSizeLayout = new GlyphLayout();
+
+	static private MsdfShaderProvider defaultMsdfShaderProvider = new DefaultMsdfShaderProvider();
+
+	public static void setDefaultMsdfShaderProvider(MsdfShaderProvider shaderProvider) {
+		defaultMsdfShaderProvider = shaderProvider;
+	}
+
+	public static MsdfShaderProvider getDefaultMsdfShaderProvider() {
+		return defaultMsdfShaderProvider;
+	}
 
 	private LabelStyle style;
 	private final GlyphLayout layout = new GlyphLayout();
 	private float prefWidth, prefHeight;
 	private final StringBuilder text = new StringBuilder();
 	private int intValue = Integer.MIN_VALUE;
-	private BitmapFontCache cache;
+	protected BitmapFontCache cache;
 	private int labelAlign = Align.left;
 	private int lineAlign = Align.left;
 	private boolean wrap;
@@ -49,28 +69,55 @@ public class Label extends Widget {
 	private boolean fontScaleChanged = false;
 	private @Null String ellipsis;
 
+	private MsdfShader shader;
+
 	public Label (@Null CharSequence text, Skin skin) {
-		this(text, skin.get(LabelStyle.class));
+		this(text, skin.get(LabelStyle.class), null);
+	}
+
+	public Label (@Null CharSequence text, Skin skin, MsdfShader shader) {
+		this(text, skin.get(LabelStyle.class), shader);
 	}
 
 	public Label (@Null CharSequence text, Skin skin, String styleName) {
-		this(text, skin.get(styleName, LabelStyle.class));
+		this(text, skin.get(styleName, LabelStyle.class), null);
+	}
+	public Label (@Null CharSequence text, Skin skin, String styleName, MsdfShader shader) {
+		this(text, skin.get(styleName, LabelStyle.class), shader);
 	}
 
 	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name from the skin and the specified
 	 * color. */
 	public Label (@Null CharSequence text, Skin skin, String fontName, Color color) {
-		this(text, new LabelStyle(skin.getFont(fontName), color));
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), color), null);
+	}
+
+	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name from the skin and the specified
+	 * color. */
+	public Label (@Null CharSequence text, Skin skin, String fontName, Color color, MsdfShader shader) {
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), color), shader);
 	}
 
 	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name and the specified color from the
 	 * skin. */
 	public Label (@Null CharSequence text, Skin skin, String fontName, String colorName) {
-		this(text, new LabelStyle(skin.getFont(fontName), skin.getColor(colorName)));
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), skin.getColor(colorName)), null);
+	}
+
+	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name and the specified color from the
+	 * skin. */
+	public Label (@Null CharSequence text, Skin skin, String fontName, String colorName, @Null MsdfShader shader) {
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), skin.getColor(colorName)), shader);
 	}
 
 	public Label (@Null CharSequence text, LabelStyle style) {
+		this(text, style, null);
+	}
+
+	public Label (@Null CharSequence text, LabelStyle style, @Null MsdfShader shader) {
+		this.shader = shader != null ? shader : defaultMsdfShaderProvider.getShader();
 		if (text != null) this.text.append(text);
+		style = new LabelStyle(style);
 		setStyle(style);
 		if (text != null && text.length() > 0) setSize(getPrefWidth(), getPrefHeight());
 	}
@@ -79,14 +126,19 @@ public class Label extends Widget {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		if (style.font == null) throw new IllegalArgumentException("Missing LabelStyle font.");
 		this.style = style;
+		setFontScale(style.getSize() / style.font.getGlyphSize());
+		for (TextureRegion region : style.font.getBitmapFont().getRegions().items) {
+			region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		}
 
 		cache = style.font.newFontCache();
 		invalidateHierarchy();
 	}
 
-	public void setFont(BitmapFont font) {
+	public void setFont(MsdfFont font) {
 		if (font == null) throw new IllegalArgumentException("Missing font.");
 		this.style.font = font;
+		setFontScale(style.getSize() / style.font.getGlyphSize());
 		cache = font.newFontCache();
 		invalidateHierarchy();
 	}
@@ -243,7 +295,10 @@ public class Label extends Widget {
 		if (style.fontColor != null) color.mul(style.fontColor);
 		cache.tint(color);
 		cache.setPosition(getX(), getY());
+		batch.setShader(shader);
+		shader.updateForStyle(style);
 		cache.draw(batch);
+		batch.setShader(null);
 	}
 
 	public float getPrefWidth () {
@@ -318,6 +373,11 @@ public class Label extends Widget {
 		invalidate();
 	}
 
+	public void setFontSize(float size) {
+		style.size = size;
+		setFontScale(style.getSize() / style.font.getGlyphSize());
+	}
+
 	public void setFontScale (float fontScale) {
 		setFontScale(fontScale, fontScale);
 	}
@@ -334,7 +394,9 @@ public class Label extends Widget {
 	}
 
 	public void setFontScaleX (float fontScaleX) {
-		setFontScale(fontScaleX, fontScaleY);
+		fontScaleChanged = true;
+		this.fontScaleX = fontScaleX;
+		invalidateHierarchy();
 	}
 
 	public float getFontScaleY () {
@@ -342,7 +404,17 @@ public class Label extends Widget {
 	}
 
 	public void setFontScaleY (float fontScaleY) {
-		setFontScale(fontScaleX, fontScaleY);
+		fontScaleChanged = true;
+		this.fontScaleY = fontScaleY;
+		invalidateHierarchy();
+	}
+
+	public void setShader(MsdfShader shader) {
+		this.shader = shader;
+	}
+
+	public MsdfShader getShader() {
+		return shader;
 	}
 
 	/** When non-null the text will be truncated "..." if it does not fit within the width of the label. Wrapping will not occur
@@ -377,22 +449,278 @@ public class Label extends Widget {
 	/** The style for a label, see {@link Label}.
 	 * @author Nathan Sweet */
 	static public class LabelStyle {
-		public BitmapFont font;
-		public @Null Color fontColor;
-		public @Null Drawable background;
+		@Null Color fontColor;
+		private @Null Drawable background;
+		public MsdfFont font;
 
-		public LabelStyle () {
+
+		public static final float WEIGHT_LIGHT = -0.1f;
+		public static final float WEIGHT_REGULAR = 0f;
+		public static final float WEIGHT_BOLD = 0.1f;
+
+
+		/**
+		 * The font name for this font style. Must not be null.
+		 * Used by {@link Label} to get a {@link MsdfFont} from a skin by name.
+		 */
+		@NotNull
+		private String fontName = "default";
+
+		/**
+		 * The font size in pixels.
+		 */
+		private float size = 32f;
+
+		/**
+		 * The font weight, from -0.5 to 0.5. Higher values result in thicker fonts.
+		 * The resulting effect depends on {@link MsdfFont#getDistanceRange()} and values
+		 * near -0.5 and 0.5 will most always produce rendering artifacts.
+		 * 0 should always look the most like the original font.
+		 */
+		private float weight = WEIGHT_REGULAR;
+
+		/**
+		 * Whether to clip shadow under the glyph. When the glyph is
+		 * drawn in a translucent color, shadow will appear behind it if not clipped.
+		 */
+		private boolean shadowClipped = false;
+
+		/**
+		 * The color of the outer shadow, can be translucent.
+		 * Use transparent for no shadow.
+		 */
+		@NotNull
+		private Color shadowColor = new Color();
+
+		/**
+		 * The drawn shadow offset in pixels, relative to the size of glyph in the font image.
+		 * Offset is in a Y positive down coordinate system.
+		 * Placing the shadow too far from the glyph can create 2 issues:
+		 * <ul>
+		 * <li>Other glyphs of the texture atlas may appear on the sides. Increasing the padding
+		 * value when generating the font can prevent it.</li>
+		 * <li>Some parts of the shadow may be cut by the next glyph drawn.</li>
+		 * </ul>
+		 */
+		@NotNull
+		private Vector2 shadowOffset = new Vector2(2f, 2f);
+
+		/**
+		 * Defines the smoothess of the shadow edges. Value should be between 0 to 0.5.
+		 * A value of 0 looks rough because it doesn't have antialiasing.
+		 */
+		private float shadowSmoothing = 0.1f;
+
+
+		/**
+		 * The color of the inner shadow, can be translucent.
+		 * Use transparent for no shadow.
+		 */
+		@NotNull
+		private Color innerShadowColor = new Color();
+
+		/**
+		 * The inner shadow range, from 0 to 0.5.
+		 */
+		private float innerShadowRange = 0.3f;
+
+		/**
+		 * The intensity of the shadow.
+		 */
+		private float shadowIntensity = 1f;
+
+
+		public LabelStyle() {
+			// Default constructor
 		}
 
-		public LabelStyle (BitmapFont font, @Null Color fontColor) {
-			this.font = font;
-			this.fontColor = fontColor;
-		}
-
-		public LabelStyle (LabelStyle style) {
+		public LabelStyle(LabelStyle style) {
 			font = style.font;
-			if (style.fontColor != null) fontColor = new Color(style.fontColor);
+			fontName = style.fontName;
+			size = style.size;
+			weight = style.weight;
+			shadowClipped = style.shadowClipped;
+			shadowColor = style.shadowColor.cpy();
+			shadowOffset = style.shadowOffset.cpy();
+			shadowSmoothing = style.shadowSmoothing;
+			innerShadowColor = style.innerShadowColor.cpy();
+			innerShadowRange = style.innerShadowRange;
+			fontColor = style.fontColor == null ? Color.WHITE.cpy() : style.fontColor.cpy();
 			background = style.background;
+			shadowIntensity = style.shadowIntensity;
+		}
+
+		public LabelStyle (MsdfFont font, @Null Color fontColor) {
+			this.font = font;
+			this.fontColor = fontColor.cpy();
+		}
+
+
+		@NotNull
+		public String getFontName() {
+			return fontName;
+		}
+
+		public LabelStyle setFontName(@NotNull String fontName) {
+			this.fontName = fontName;
+			return this;
+		}
+
+		public float getSize() {
+			return size;
+		}
+
+		public LabelStyle setSize(float size) {
+			this.size = size;
+			return this;
+		}
+
+		public float getWeight() {
+			return weight;
+		}
+
+		public LabelStyle setWeight(float weight) {
+			this.weight = weight;
+			return this;
+		}
+
+		public boolean isShadowClipped() {
+			return shadowClipped;
+		}
+
+		public LabelStyle setShadowClipped(boolean shadowClipped) {
+			this.shadowClipped = shadowClipped;
+			return this;
+		}
+
+		@NotNull
+		public Color getShadowColor() {
+			return shadowColor;
+		}
+
+		public LabelStyle setShadowColor(@NotNull Color shadowColor) {
+			//noinspection ConstantConditions
+			if (shadowColor == null) throw new NullPointerException("Shadow color cannot be null.");
+
+			this.shadowColor = shadowColor;
+			return this;
+		}
+
+		@NotNull
+		public Vector2 getShadowOffset() {
+			return shadowOffset;
+		}
+
+		public LabelStyle setShadowOffset(@NotNull Vector2 shadowOffset) {
+			//noinspection ConstantConditions
+			if (shadowColor == null) throw new NullPointerException("Shadow offset cannot be null.");
+
+			this.shadowOffset = shadowOffset;
+			return this;
+		}
+
+		public float getShadowSmoothing() {
+			return shadowSmoothing;
+		}
+
+		public LabelStyle setShadowSmoothing(float shadowSmoothing) {
+			this.shadowSmoothing = shadowSmoothing;
+			return this;
+		}
+
+		@NotNull
+		public Color getInnerShadowColor() {
+			return innerShadowColor;
+		}
+
+		public LabelStyle setInnerShadowColor(@NotNull Color innerShadowColor) {
+			this.innerShadowColor = innerShadowColor;
+			return this;
+		}
+
+		public float getInnerShadowRange() {
+			return innerShadowRange;
+		}
+
+		public LabelStyle setInnerShadowRange(float innerShadowRange) {
+			this.innerShadowRange = innerShadowRange;
+			return this;
+		}
+
+		public Color getFontColor() {
+			return fontColor;
+		}
+
+		public LabelStyle setFontColor(@Null Color fontColor) {
+			this.fontColor = fontColor;
+			return this;
+		}
+
+		public Drawable getBackground() {
+			return background;
+		}
+
+		public LabelStyle setBackground(Drawable background) {
+			this.background = background;
+			return this;
+		}
+
+		public MsdfFont getFont() {
+			return font;
+		}
+
+		public LabelStyle setFont(MsdfFont font) {
+			this.font = font;
+			return this;
+		}
+
+		public float getShadowIntensity() {
+			return shadowIntensity;
+		}
+
+		public void setShadowIntensity(float shadowIntensity) {
+			this.shadowIntensity = shadowIntensity;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			LabelStyle that = (LabelStyle) o;
+
+			if (Float.compare(that.size, size) != 0) return false;
+			if (Float.compare(that.weight, weight) != 0) return false;
+			if (shadowClipped != that.shadowClipped) return false;
+			if (Float.compare(that.shadowSmoothing, shadowSmoothing) != 0) return false;
+			if (Float.compare(that.innerShadowRange, innerShadowRange) != 0) return false;
+			if (Float.compare(that.shadowIntensity, shadowIntensity) != 0) return false;
+			if (!fontColor.equals(that.fontColor)) return false;
+			if (!Objects.equals(background, that.background))
+				return false;
+			if (!font.equals(that.font)) return false;
+			if (!fontName.equals(that.fontName)) return false;
+			if (!shadowColor.equals(that.shadowColor)) return false;
+			if (!shadowOffset.equals(that.shadowOffset)) return false;
+			return innerShadowColor.equals(that.innerShadowColor);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = fontColor.hashCode();
+			result = 31 * result + (background != null ? background.hashCode() : 0);
+			result = 31 * result + font.hashCode();
+			result = 31 * result + fontName.hashCode();
+			result = 31 * result + (size != +0.0f ? Float.floatToIntBits(size) : 0);
+			result = 31 * result + (weight != +0.0f ? Float.floatToIntBits(weight) : 0);
+			result = 31 * result + (shadowClipped ? 1 : 0);
+			result = 31 * result + shadowColor.hashCode();
+			result = 31 * result + shadowOffset.hashCode();
+			result = 31 * result + (shadowSmoothing != +0.0f ? Float.floatToIntBits(shadowSmoothing) : 0);
+			result = 31 * result + innerShadowColor.hashCode();
+			result = 31 * result + (innerShadowRange != +0.0f ? Float.floatToIntBits(innerShadowRange) : 0);
+			result = 31 * result + (shadowIntensity != +0.0f ? Float.floatToIntBits(shadowIntensity) : 0);
+			return result;
 		}
 	}
 }

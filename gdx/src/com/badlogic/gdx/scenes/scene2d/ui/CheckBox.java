@@ -19,6 +19,7 @@ package com.badlogic.gdx.scenes.scene2d.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
@@ -104,7 +105,7 @@ public class CheckBox extends TextButton {
 		public CheckBoxStyle () {
 		}
 
-		public CheckBoxStyle (Drawable checkboxOff, Drawable checkboxOn, BitmapFont font, @Null Color fontColor) {
+		public CheckBoxStyle (Drawable checkboxOff, Drawable checkboxOn, MsdfFont font, @Null Color fontColor) {
 			this.checkboxOff = checkboxOff;
 			this.checkboxOn = checkboxOn;
 			this.font = font;

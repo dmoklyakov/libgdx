@@ -19,6 +19,7 @@ package com.badlogic.gdx.scenes.scene2d.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -42,6 +43,7 @@ public class TextButton extends Button {
 
 	public TextButton (@Null String text, TextButtonStyle style) {
 		super();
+		style = new TextButtonStyle(style);
 		setStyle(style);
 		label = newLabel(text, new LabelStyle(style.font, style.fontColor));
 		label.setAlignment(Align.center);
@@ -135,14 +137,14 @@ public class TextButton extends Button {
 	/** The style for a text button, see {@link TextButton}.
 	 * @author Nathan Sweet */
 	static public class TextButtonStyle extends ButtonStyle {
-		public BitmapFont font;
+		public MsdfFont font;
 		public @Null Color fontColor, downFontColor, overFontColor, focusedFontColor, disabledFontColor;
 		public @Null Color checkedFontColor, checkedDownFontColor, checkedOverFontColor, checkedFocusedFontColor;
 
 		public TextButtonStyle () {
 		}
 
-		public TextButtonStyle (@Null Drawable up, @Null Drawable down, @Null Drawable checked, @Null BitmapFont font) {
+		public TextButtonStyle (@Null Drawable up, @Null Drawable down, @Null Drawable checked, @Null MsdfFont font) {
 			super(up, down, checked);
 			this.font = font;
 		}

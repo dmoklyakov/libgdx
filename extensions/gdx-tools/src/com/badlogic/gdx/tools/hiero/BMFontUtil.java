@@ -43,6 +43,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.tools.hiero.unicodefont.Glyph;
 import com.badlogic.gdx.tools.hiero.unicodefont.GlyphPage;
 import com.badlogic.gdx.tools.hiero.unicodefont.UnicodeFont;
+import com.badlogic.gdx.utils.IntFloatMap;
 import com.badlogic.gdx.utils.IntIntMap;
 
 /** @author Nathan Sweet */
@@ -128,12 +129,13 @@ public class BMFontUtil {
 
 			List kernings = new ArrayList(256);
 			class KerningPair {
-				public int firstCodePoint, secondCodePoint, offset;
+				public int firstCodePoint, secondCodePoint;
+				public float offset;
 			}
-			for (IntIntMap.Entry entry : kerning.getKernings()) {
+			for (IntFloatMap.Entry entry : kerning.getKernings()) {
 				int firstGlyphCode = entry.key >> 16;
 				int secondGlyphCode = entry.key & 0xffff;
-				int offset = entry.value;
+				float offset = entry.value;
 				int firstCodePoint = glyphCodeToCodePoint.get(firstGlyphCode, -1);
 				int secondCodePoint = glyphCodeToCodePoint.get(secondGlyphCode, -1);
 

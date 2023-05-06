@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -192,6 +193,10 @@ public class Skin implements Disposable {
 
 	public BitmapFont getFont (String name) {
 		return get(name, BitmapFont.class);
+	}
+
+	public MsdfFont getMsdfFont (String name) {
+		return get(name, MsdfFont.class);
 	}
 
 	/** Returns a registered texture region. If no region is found but a texture exists with the name, a region is created from the

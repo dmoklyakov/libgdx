@@ -125,7 +125,14 @@
 		<include name="graphics/g2d/SpriteCache.java"/>
 		<include name="graphics/g2d/TextureAtlas.java"/>
 		<include name="graphics/g2d/TextureRegion.java"/>
-		
+
+	<!-- graphics/g2d/msdf -->
+		<include name="graphics/g2d/msdf/FontStyle.java"/>
+		<include name="graphics/g2d/msdf/MsdfFont.java"/>
+		<include name="graphics/g2d/msdf/MsdfFontLoader.java"/>
+		<include name="graphics/g2d/msdf/MsdfLabel.java"/>
+		<include name="graphics/g2d/msdf/MsdfShader.java"/>
+
 	<!-- graphics/g3d -->
 		<include name="graphics/g3d/Attribute.java"/>
 		<include name="graphics/g3d/Attributes.java"/>
@@ -521,6 +528,8 @@
 	</source>
 
 	<define-configuration-property name="gdx.files.classpath" is-multi-valued="true" />
+	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g2d/shaders/msdf.fragment.glsl" />
+	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g2d/shaders/msdf.vertex.glsl" />
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl" />
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl" />
 	<extend-configuration-property name="gdx.files.classpath" value="com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl" />

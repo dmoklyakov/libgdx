@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -344,14 +345,14 @@ public class Window extends Table {
 	 * @author Nathan Sweet */
 	static public class WindowStyle {
 		public @Null Drawable background;
-		public BitmapFont titleFont;
+		public MsdfFont titleFont;
 		public @Null Color titleFontColor = new Color(1, 1, 1, 1);
 		public @Null Drawable stageBackground;
 
 		public WindowStyle () {
 		}
 
-		public WindowStyle (BitmapFont titleFont, Color titleFontColor, @Null Drawable background) {
+		public WindowStyle (MsdfFont titleFont, Color titleFontColor, @Null Drawable background) {
 			this.titleFont = titleFont;
 			this.titleFontColor.set(titleFontColor);
 			this.background = background;
