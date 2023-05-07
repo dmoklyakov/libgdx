@@ -1,5 +1,12 @@
 {
-BitmapFont: { default-font: { file: default.fnt } },
+BitmapFont: { default-bitmap-font: { file: signika.fnt } },
+com.badlogic.gdx.graphics.g2d.msdf.MsdfFont: {
+	default-font: {
+		bitmapFont: "default-bitmap-font",
+		glyphSize: 64,
+		distanceRange: 4,
+	}
+},
 Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
 	white: { a: 1, b: 1, g: 1, r: 1 },

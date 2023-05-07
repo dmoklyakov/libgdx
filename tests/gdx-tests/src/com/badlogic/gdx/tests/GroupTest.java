@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -73,7 +74,7 @@ public class GroupTest extends GdxTest {
 		group2.addActor(group1);
 
 		LabelStyle style = new LabelStyle();
-		style.font = new BitmapFont();
+		style.font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
 
 		Texture texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
 

@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
@@ -93,6 +94,12 @@ public class GlyphLayout implements Poolable {
 	 * string, the font's current color, and no alignment or wrapping. */
 	public void setText (BitmapFont font, CharSequence str) {
 		setText(font, str, 0, str.length(), font.getColor(), 0, Align.left, false, null);
+	}
+
+	/** Calls {@link #setText(BitmapFont, CharSequence) setText} with the whole
+	 * string, the font's current color, and no alignment or wrapping. */
+	public void setText(MsdfFont font, CharSequence str) {
+		setText(font.getBitmapFont(), str);
 	}
 
 	/** Calls {@link #setText(BitmapFont, CharSequence, int, int, Color, float, int, boolean, String) setText} with the whole

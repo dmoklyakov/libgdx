@@ -85,7 +85,7 @@ public class ImageTextButton extends Button {
 			ImageTextButtonStyle textButtonStyle = (ImageTextButtonStyle)style;
 			LabelStyle labelStyle = label.getStyle();
 			labelStyle.font = textButtonStyle.font;
-			labelStyle.fontColor = getFontColor();
+			labelStyle.setFontColor(getFontColor());
 			label.setStyle(labelStyle);
 		}
 	}
@@ -147,7 +147,7 @@ public class ImageTextButton extends Button {
 
 	public void draw (Batch batch, float parentAlpha) {
 		updateImage();
-		label.getStyle().fontColor = getFontColor();
+		label.getStyle().setFontColor(getFontColor());
 		super.draw(batch, parentAlpha);
 	}
 

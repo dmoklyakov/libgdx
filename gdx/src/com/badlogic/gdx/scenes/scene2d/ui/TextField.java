@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout.GlyphRun;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -312,7 +313,7 @@ public class TextField extends Widget implements Disableable {
 		} else if (!focused) //
 			cursorOn = false;
 
-		final BitmapFont font = style.font;
+		final MsdfFont font = style.font;
 		final Color fontColor = (disabled && style.disabledFontColor != null) ? style.disabledFontColor
 			: ((focused && style.focusedFontColor != null) ? style.focusedFontColor : style.fontColor);
 		final Drawable selection = style.selection;
@@ -343,7 +344,7 @@ public class TextField extends Widget implements Disableable {
 		float yOffset = font.isFlipped() ? -textHeight : 0;
 		if (displayText.length() == 0) {
 			if ((!focused || disabled) && messageText != null) {
-				BitmapFont messageFont = style.messageFont != null ? style.messageFont : font;
+				MsdfFont messageFont = style.messageFont != null ? style.messageFont : font;
 				if (style.messageFontColor != null) {
 					messageFont.setColor(style.messageFontColor.r, style.messageFontColor.g, style.messageFontColor.b,
 						style.messageFontColor.a * color.a * parentAlpha);
@@ -360,7 +361,7 @@ public class TextField extends Widget implements Disableable {
 		}
 	}
 
-	protected float getTextY (BitmapFont font, @Null Drawable background) {
+	protected float getTextY (MsdfFont font, @Null Drawable background) {
 		float height = getHeight();
 		float textY = textHeight / 2 + font.getDescent();
 		if (background != null) {
@@ -374,27 +375,27 @@ public class TextField extends Widget implements Disableable {
 	}
 
 	/** Draws selection rectangle **/
-	protected void drawSelection (Drawable selection, Batch batch, BitmapFont font, float x, float y) {
+	protected void drawSelection (Drawable selection, Batch batch, MsdfFont font, float x, float y) {
 		selection.draw(batch, x + textOffset + selectionX + fontOffset, y - textHeight - font.getDescent(), selectionWidth,
 			textHeight);
 	}
 
-	protected void drawText (Batch batch, BitmapFont font, float x, float y) {
+	protected void drawText (Batch batch, MsdfFont font, float x, float y) {
 		font.draw(batch, displayText, x + textOffset, y, visibleTextStart, visibleTextEnd, 0, Align.left, false);
 	}
 
-	protected void drawMessageText (Batch batch, BitmapFont font, float x, float y, float maxWidth) {
+	protected void drawMessageText (Batch batch, MsdfFont font, float x, float y, float maxWidth) {
 		font.draw(batch, messageText, x, y, 0, messageText.length(), maxWidth, textHAlign, false, "...");
 	}
 
-	protected void drawCursor (Drawable cursorPatch, Batch batch, BitmapFont font, float x, float y) {
+	protected void drawCursor (Drawable cursorPatch, Batch batch, MsdfFont font, float x, float y) {
 		cursorPatch.draw(batch,
 			x + textOffset + glyphPositions.get(cursor) - glyphPositions.get(visibleTextStart) + fontOffset + font.getData().cursorX,
 			y - textHeight - font.getDescent(), cursorPatch.getMinWidth(), textHeight);
 	}
 
 	void updateDisplayText () {
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 		BitmapFontData data = font.getData();
 		String text = this.text;
 		int textLength = text.length();
@@ -1091,17 +1092,17 @@ public class TextField extends Widget implements Disableable {
 	 * @author mzechner
 	 * @author Nathan Sweet */
 	static public class TextFieldStyle {
-		public BitmapFont font;
+		public MsdfFont font;
 		public Color fontColor;
 		public @Null Color focusedFontColor, disabledFontColor;
 		public @Null Drawable background, focusedBackground, disabledBackground, cursor, selection;
-		public @Null BitmapFont messageFont;
+		public @Null MsdfFont messageFont;
 		public @Null Color messageFontColor;
 
 		public TextFieldStyle () {
 		}
 
-		public TextFieldStyle (BitmapFont font, Color fontColor, @Null Drawable cursor, @Null Drawable selection,
+		public TextFieldStyle (MsdfFont font, Color fontColor, @Null Drawable cursor, @Null Drawable selection,
 			@Null Drawable background) {
 			this.font = font;
 			this.fontColor = fontColor;

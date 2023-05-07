@@ -24,6 +24,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -44,7 +45,7 @@ public abstract class AbstractTestWrapper extends GdxTest {
 	Stage ui;
 	Table container;
 	Skin skin;
-	BitmapFont font;
+	MsdfFont font;
 	GdxTest test;
 	boolean dispose = false;
 
@@ -56,7 +57,7 @@ public abstract class AbstractTestWrapper extends GdxTest {
 
 		ui = new Stage(new ExtendViewport(480, 320));
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-		font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
+		font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
 		container = new Table();
 		ui.addActor(container);
 		container.debug();

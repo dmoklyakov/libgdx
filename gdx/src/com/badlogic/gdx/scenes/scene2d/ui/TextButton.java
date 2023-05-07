@@ -43,7 +43,6 @@ public class TextButton extends Button {
 
 	public TextButton (@Null String text, TextButtonStyle style) {
 		super();
-		style = new TextButtonStyle(style);
 		setStyle(style);
 		label = newLabel(text, new LabelStyle(style.font, style.fontColor));
 		label.setAlignment(Align.center);
@@ -65,7 +64,7 @@ public class TextButton extends Button {
 			TextButtonStyle textButtonStyle = (TextButtonStyle)style;
 			LabelStyle labelStyle = label.getStyle();
 			labelStyle.font = textButtonStyle.font;
-			labelStyle.fontColor = textButtonStyle.fontColor;
+			labelStyle.setFontColor(textButtonStyle.fontColor);
 			label.setStyle(labelStyle);
 		}
 	}
@@ -99,7 +98,7 @@ public class TextButton extends Button {
 	}
 
 	public void draw (Batch batch, float parentAlpha) {
-		label.getStyle().fontColor = getFontColor();
+		label.getStyle().setFontColor(getFontColor());
 		super.draw(batch, parentAlpha);
 	}
 

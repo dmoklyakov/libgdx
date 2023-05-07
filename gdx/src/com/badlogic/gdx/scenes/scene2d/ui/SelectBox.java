@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -185,7 +186,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 
 	public void layout () {
 		Drawable bg = style.background;
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 
 		if (bg != null) {
 			prefHeight = Math.max(bg.getTopHeight() + bg.getBottomHeight() + font.getCapHeight() - font.getDescent() * 2,
@@ -247,7 +248,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 
 		Drawable background = getBackgroundDrawable();
 		Color fontColor = getFontColor();
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 
 		Color color = getColor();
 		float x = getX(), y = getY();
@@ -271,7 +272,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		}
 	}
 
-	protected GlyphLayout drawItem (Batch batch, BitmapFont font, T item, float x, float y, float width) {
+	protected GlyphLayout drawItem (Batch batch, MsdfFont font, T item, float x, float y, float width) {
 		String string = toString(item);
 		return font.draw(batch, string, x, y, 0, string.length(), width, alignment, false, "...");
 	}
@@ -603,7 +604,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 	 * @author mzechner
 	 * @author Nathan Sweet */
 	static public class SelectBoxStyle {
-		public BitmapFont font;
+		public MsdfFont font;
 		public Color fontColor = new Color(1, 1, 1, 1);
 		public @Null Color overFontColor, disabledFontColor;
 		public @Null Drawable background;
@@ -614,7 +615,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		public SelectBoxStyle () {
 		}
 
-		public SelectBoxStyle (BitmapFont font, Color fontColor, @Null Drawable background, ScrollPaneStyle scrollStyle,
+		public SelectBoxStyle (MsdfFont font, Color fontColor, @Null Drawable background, ScrollPaneStyle scrollStyle,
 			ListStyle listStyle) {
 			this.font = font;
 			this.fontColor.set(fontColor);

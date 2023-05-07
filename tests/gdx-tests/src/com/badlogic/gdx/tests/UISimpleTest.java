@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -56,7 +57,8 @@ public class UISimpleTest extends GdxTest {
 		skin.add("white", new Texture(pixmap));
 
 		// Store the default libGDX font under the name "default".
-		skin.add("default", new BitmapFont());
+		MsdfFont font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
+		skin.add("default", font);
 
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButtonStyle textButtonStyle = new TextButtonStyle();
@@ -64,7 +66,7 @@ public class UISimpleTest extends GdxTest {
 		textButtonStyle.down = skin.newDrawable("white", Color.DARK_GRAY);
 		textButtonStyle.checked = skin.newDrawable("white", Color.BLUE);
 		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-		textButtonStyle.font = skin.getFont("default");
+		textButtonStyle.font = skin.getMsdfFont("default");
 		skin.add("default", textButtonStyle);
 
 		// Create a table that fills the screen. Everything else will go inside this table.

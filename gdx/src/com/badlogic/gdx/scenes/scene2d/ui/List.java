@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -172,7 +173,7 @@ public class List<T> extends Widget implements Cullable {
 	}
 
 	public void layout () {
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 		Drawable selectedDrawable = style.selection;
 
 		itemHeight = font.getCapHeight() - font.getDescent() * 2;
@@ -201,7 +202,7 @@ public class List<T> extends Widget implements Cullable {
 
 		drawBackground(batch, parentAlpha);
 
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 		Drawable selectedDrawable = style.selection;
 		Color fontColorSelected = style.fontColorSelected;
 		Color fontColorUnselected = style.fontColorUnselected;
@@ -262,7 +263,7 @@ public class List<T> extends Widget implements Cullable {
 		}
 	}
 
-	protected GlyphLayout drawItem (Batch batch, BitmapFont font, int index, T item, float x, float y, float width) {
+	protected GlyphLayout drawItem (Batch batch, MsdfFont font, int index, T item, float x, float y, float width) {
 		String string = toString(item);
 		return font.draw(batch, string, x, y, 0, string.length(), width, alignment, false, "...");
 	}
@@ -436,7 +437,7 @@ public class List<T> extends Widget implements Cullable {
 	 * @author mzechner
 	 * @author Nathan Sweet */
 	static public class ListStyle {
-		public BitmapFont font;
+		public MsdfFont font;
 		public Color fontColorSelected = new Color(1, 1, 1, 1);
 		public Color fontColorUnselected = new Color(1, 1, 1, 1);
 		public Drawable selection;
@@ -445,7 +446,7 @@ public class List<T> extends Widget implements Cullable {
 		public ListStyle () {
 		}
 
-		public ListStyle (BitmapFont font, Color fontColorSelected, Color fontColorUnselected, Drawable selection) {
+		public ListStyle (MsdfFont font, Color fontColorSelected, Color fontColorUnselected, Drawable selection) {
 			this.font = font;
 			this.fontColorSelected.set(fontColorSelected);
 			this.fontColorUnselected.set(fontColorUnselected);

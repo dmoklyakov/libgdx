@@ -17,10 +17,13 @@
 package com.badlogic.gdx.graphics.g2d.msdf;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -80,6 +83,11 @@ public final class MsdfFont implements Disposable {
         this(new BitmapFont(fontFile, fontRegion), glyphSize, distanceRange);
     }
 
+    public MsdfFont(@NotNull FileHandle fontFile, @NotNull FileHandle imageFile,
+                    float glyphSize, float distanceRange, boolean flip) {
+        this(new BitmapFont(fontFile, imageFile, flip), glyphSize, distanceRange);
+    }
+
     /**
      * Create a font from a bitmap font.
      */
@@ -132,8 +140,63 @@ public final class MsdfFont implements Disposable {
     	return bitmapFont.getScaleY();
     }
 
+    public float getCapHeight() {
+    	return bitmapFont.getCapHeight();
+    }
+
+    public BitmapFont.BitmapFontData getData() {
+    	return bitmapFont.getData();
+    }
+
+    public void setColor(Color color) {
+    	bitmapFont.setColor(color);
+    }
+
+    public void setColor (float r, float g, float b, float a) {
+        bitmapFont.setColor(r, g, b, a);
+    }
+
+
+    public GlyphLayout draw (Batch batch, CharSequence str, float x, float y) {
+        return getBitmapFont().draw(batch, str, x, y);
+    }
+
+    public GlyphLayout draw (Batch batch, CharSequence str, float x, float y, float targetWidth, int halign, boolean wrap) {
+        return getBitmapFont().draw(batch, str, x, y, targetWidth, halign, wrap);
+    }
+
+    public GlyphLayout draw (Batch batch, CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
+                             boolean wrap) {
+        return getBitmapFont().draw(batch, str, x, y, start, end, targetWidth, halign, wrap);
+    }
+
+    public GlyphLayout draw (Batch batch, CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
+                             boolean wrap, String truncate) {
+        return getBitmapFont().draw(batch, str, x, y, start, end, targetWidth, halign, wrap, truncate);
+    }
+
+    public void draw (Batch batch, GlyphLayout layout, float x, float y) {
+        getBitmapFont().draw(batch, layout, x, y);
+    }
+
+    public float getLineHeight() {
+    	return bitmapFont.getLineHeight();
+    }
+
     public BitmapFontCache newFontCache() {
     	return bitmapFont.newFontCache();
+    }
+
+    public boolean isFlipped() {
+    	return bitmapFont.isFlipped();
+    }
+
+    public boolean usesIntegerPositions() {
+    	return bitmapFont.usesIntegerPositions();
+    }
+
+    public TextureRegion getRegion() {
+    	return bitmapFont.getRegion();
     }
 
     @Override

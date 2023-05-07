@@ -23,6 +23,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -46,7 +47,7 @@ public class BulletTestCollection extends GdxTest implements InputProcessor, Ges
 
 	private Application app = null;
 
-	private BitmapFont font;
+	private MsdfFont font;
 	private Stage hud;
 	private Label fpsLabel;
 	private Label titleLabel;
@@ -77,7 +78,7 @@ public class BulletTestCollection extends GdxTest implements InputProcessor, Ges
 		cameraController.translateTarget = false;
 		Gdx.input.setInputProcessor(new InputMultiplexer(cameraController, this, new GestureDetector(this)));
 
-		font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
+		font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
 		hud = new Stage();
 		hud.addActor(fpsLabel = new Label(" ", new Label.LabelStyle(font, Color.WHITE)));
 		fpsLabel.setPosition(0, 0);

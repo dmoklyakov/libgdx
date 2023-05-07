@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -42,7 +43,8 @@ public class DragAndDropTest extends GdxTest {
 		Gdx.input.setInputProcessor(stage);
 
 		final Skin skin = new Skin();
-		skin.add("default", new LabelStyle(new BitmapFont(), Color.WHITE));
+		MsdfFont font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
+		skin.add("default", new LabelStyle(font, Color.WHITE));
 		skin.add("badlogic", new Texture("data/badlogic.jpg"));
 
 		Image sourceImage = new Image(skin, "badlogic");

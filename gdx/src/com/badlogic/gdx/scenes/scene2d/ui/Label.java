@@ -149,6 +149,21 @@ public class Label extends Widget {
 		return style;
 	}
 
+	@Override
+	public void setColor(Color color) {
+		style.setFontColor(color);
+	}
+
+	@Override
+	public void setColor(float r, float g, float b, float a) {
+		style.setFontColor(r, g, b, a);
+	}
+
+	@Override
+	public Color getColor() {
+		return style.getFontColor();
+	}
+
 	/** Sets the text to the specified integer value. If the text is already equivalent to the specified value, a string is not
 	 * allocated.
 	 * @return true if the text was changed. */
@@ -292,8 +307,6 @@ public class Label extends Widget {
 			batch.setColor(color.r, color.g, color.b, color.a);
 			style.background.draw(batch, getX(), getY(), getWidth(), getHeight());
 		}
-		if (style.fontColor != null) color.mul(style.fontColor);
-		cache.tint(color);
 		cache.setPosition(getX(), getY());
 		batch.setShader(shader);
 		shader.updateForStyle(style);
@@ -449,7 +462,7 @@ public class Label extends Widget {
 	/** The style for a label, see {@link Label}.
 	 * @author Nathan Sweet */
 	static public class LabelStyle {
-		@Null Color fontColor;
+		private Color fontColor = new Color(Color.WHITE);
 		private @Null Drawable background;
 		public MsdfFont font;
 
@@ -552,7 +565,7 @@ public class Label extends Widget {
 
 		public LabelStyle (MsdfFont font, @Null Color fontColor) {
 			this.font = font;
-			this.fontColor = fontColor.cpy();
+			this.fontColor.set(fontColor);
 		}
 
 
@@ -651,8 +664,13 @@ public class Label extends Widget {
 			return fontColor;
 		}
 
-		public LabelStyle setFontColor(@Null Color fontColor) {
-			this.fontColor = fontColor;
+		public LabelStyle setFontColor(Color fontColor) {
+			this.fontColor.set(fontColor);
+			return this;
+		}
+
+		public LabelStyle setFontColor(float r, float g, float b, float a) {
+			this.fontColor.set(r, g, b, a);
 			return this;
 		}
 

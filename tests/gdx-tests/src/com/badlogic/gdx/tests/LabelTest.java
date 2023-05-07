@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -48,13 +49,13 @@ public class LabelTest extends GdxTest {
 		renderer = new ShapeRenderer();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		skin.getAtlas().getTextures().iterator().next().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		skin.getFont("default-font").getData().markupEnabled = true;
-		skin.getFont("default-font").getData().setScale(scale);
+		skin.getMsdfFont("default-font").getData().markupEnabled = true;
+		skin.getMsdfFont("default-font").getData().setScale(scale);
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
 
 		// skin.getFont("default-font").getData().getGlyph('T').xoffset = -20;
-		skin.getFont("default-font").getData().getGlyph('B').setKerning('B', -5);
+		skin.getMsdfFont("default-font").getData().getGlyph('B').setKerning('B', -5);
 
 		Label label;
 
@@ -127,7 +128,7 @@ public class LabelTest extends GdxTest {
 
 		float x = 40, y = 15 + 20 * scale;
 
-		BitmapFont font = skin.getFont("default-font");
+		MsdfFont font = skin.getMsdfFont("default-font");
 		batch.begin();
 		font.draw(batch, "The quick brown fox jumped over the lazy cow.", x, y);
 		batch.end();

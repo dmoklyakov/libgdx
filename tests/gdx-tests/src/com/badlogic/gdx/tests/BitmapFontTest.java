@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout.GlyphRun;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -40,7 +41,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class BitmapFontTest extends GdxTest {
 	private Stage stage;
 	private SpriteBatch spriteBatch;
-	private BitmapFont font;
+	private MsdfFont font;
 	private ShapeRenderer renderer;
 	private BitmapFont multiPageFont;
 	private BitmapFont smallFont;
@@ -51,11 +52,11 @@ public class BitmapFontTest extends GdxTest {
 	public void create () {
 		spriteBatch = new SpriteBatch();
 		// font = new BitmapFont(Gdx.files.internal("data/verdana39.fnt"), false);
-		font = new BitmapFont(Gdx.files.internal("data/lsans-32-pad.fnt"), false);
+		font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
 		smallFont = new BitmapFont(); // uses LSans 15, the default
 		// font = new FreeTypeFontGenerator(Gdx.files.internal("data/lsans.ttf")).generateFont(new FreeTypeFontParameter());
-		font.getData().markupEnabled = true;
-		font.getData().breakChars = new char[] {'-'};
+		font.getBitmapFont().getData().markupEnabled = true;
+		font.getBitmapFont().getData().breakChars = new char[] {'-'};
 
 		multiPageFont = new BitmapFont(Gdx.files.internal("data/multipagefont.fnt"));
 
@@ -97,11 +98,11 @@ public class BitmapFontTest extends GdxTest {
 		// Test wrapping or truncation with the font directly.
 		if (true) {
 			// BitmapFont font = label.getStyle().font;
-			BitmapFont font = this.font;
-			font.getData().markupEnabled = true;
-			font.getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+			MsdfFont font = this.font;
+			font.getBitmapFont().getData().markupEnabled = true;
+			font.getBitmapFont().getRegion().getTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 
-			font.getData().setScale(2f);
+			font.getBitmapFont().getData().setScale(2f);
 			renderer.begin(ShapeRenderer.ShapeType.Line);
 			renderer.setColor(0, 1, 0, 1);
 			float w = Gdx.input.getX() - 10;
@@ -117,12 +118,12 @@ public class BitmapFontTest extends GdxTest {
 			// text = "AA BB \nEE"; // When wrapping after BB, there should not be a blank line before EE.
 			text = "[BLUE]A[]A BB [#00f000]EE[] T [GREEN]e[]   \r\r[PINK]\n\nV[][YELLOW]a bb[] ([CYAN]5[]FFFurz)\nV[PURPLE]a[]\nVa\n[PURPLE]V[]a";
 			if (true) { // Test wrap.
-				layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, true, null);
+				layout.setText(font.getBitmapFont(), text, 0, text.length(), font.getBitmapFont().getColor(), w, Align.center, true, null);
 			} else { // Test truncation.
-				layout.setText(font, text, 0, text.length(), font.getColor(), w, Align.center, false, "...");
+				layout.setText(font.getBitmapFont(), text, 0, text.length(), font.getBitmapFont().getColor(), w, Align.center, false, "...");
 			}
 			float meowy = (500 / 2 + layout.height / 2 + 5);
-			font.draw(spriteBatch, layout, 10, 10 + meowy);
+			font.getBitmapFont().draw(spriteBatch, layout, 10, 10 + meowy);
 			spriteBatch.end();
 
 			Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -144,10 +145,10 @@ public class BitmapFontTest extends GdxTest {
 				else
 					renderer.setColor(c, c, 0, 1);
 				GlyphRun r = layout.runs.get(i);
-				renderer.rect(10 + r.x, 10 + meowy + r.y, r.width, -font.getLineHeight());
+				renderer.rect(10 + r.x, 10 + meowy + r.y, r.width, -font.getBitmapFont().getLineHeight());
 			}
 			renderer.end();
-			font.getData().setScale(1f);
+			font.getBitmapFont().getData().setScale(1f);
 			return;
 		}
 
@@ -167,19 +168,19 @@ public class BitmapFontTest extends GdxTest {
 			spriteBatch.begin();
 
 			String text = "Sphinx of black quartz, judge my vow.";
-			font.setColor(Color.RED);
+			font.getBitmapFont().setColor(Color.RED);
 
 			float x = 100, y = 20;
 			float alignmentWidth;
 
 			if (false) {
 				alignmentWidth = 0;
-				font.draw(spriteBatch, text, x, viewHeight - y, alignmentWidth, Align.right, false);
+				font.getBitmapFont().draw(spriteBatch, text, x, viewHeight - y, alignmentWidth, Align.right, false);
 			}
 
 			if (true) {
 				alignmentWidth = 280;
-				font.draw(spriteBatch, text, x, viewHeight - y, alignmentWidth, Align.right, true);
+				font.getBitmapFont().draw(spriteBatch, text, x, viewHeight - y, alignmentWidth, Align.right, true);
 			}
 
 			font.draw(spriteBatch, "[", 50, 60, 100, Align.left, true);

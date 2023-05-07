@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
@@ -50,7 +51,7 @@ public class StageTest extends GdxTest implements InputProcessor {
 	Stage ui;
 	Texture texture;
 	Texture uiTexture;
-	BitmapFont font;
+	MsdfFont font;
 
 	boolean rotateSprites = false;
 	boolean scaleSprites = false;
@@ -64,7 +65,7 @@ public class StageTest extends GdxTest implements InputProcessor {
 	public void create () {
 		texture = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), false);
+		font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), 64f, 4f);
 
 		stage = new Stage(new ScreenViewport());
 

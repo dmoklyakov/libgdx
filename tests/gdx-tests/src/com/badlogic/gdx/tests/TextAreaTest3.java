@@ -19,6 +19,7 @@ package com.badlogic.gdx.tests;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -49,17 +50,16 @@ public class TextAreaTest3 extends GdxTest {
 		printMetrics("default", styleDefault.font);
 
 		styleLSans15 = new TextField.TextFieldStyle(styleDefault);
-		styleLSans15.font = new BitmapFont(Gdx.files.internal("data/lsans-15.fnt"), Gdx.files.internal("data/lsans-15_00.png"),
-			false);
-		printMetrics("lsans15", styleLSans15.font);
+		styleLSans15.font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), Gdx.files.internal("data/signika.png"), 64f, 4f, false);
+		printMetrics("default", styleLSans15.font);
 
 		styleLSans32 = new TextField.TextFieldStyle(styleDefault);
-		styleLSans32.font = new BitmapFont(Gdx.files.internal("data/lsans-32.fnt"), Gdx.files.internal("data/lsans-32.png"), false);
-		printMetrics("lsans32", styleLSans32.font);
+		styleLSans32.font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), Gdx.files.internal("data/signika.png"), 64f, 4f, false);
+		printMetrics("default", styleLSans32.font);
 
 		styleFont = new TextField.TextFieldStyle(styleDefault);
-		styleFont.font = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
-		printMetrics("font", styleFont.font);
+		styleFont.font = new MsdfFont(Gdx.files.internal("data/signika.fnt"), Gdx.files.internal("data/signika.png"), 64f, 4f, false);
+		printMetrics("default", styleFont.font);
 
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
@@ -102,7 +102,7 @@ public class TextAreaTest3 extends GdxTest {
 		group.setChecked("LSans 32");
 	}
 
-	private void printMetrics (String name, BitmapFont font) {
+	private void printMetrics (String name, MsdfFont font) {
 		BitmapFont.BitmapFontData data = font.getData();
 		float textHeight = data.capHeight - data.descent;
 		float textFieldHeight = data.capHeight - data.descent * 2;

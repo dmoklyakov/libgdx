@@ -21,6 +21,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -211,7 +212,7 @@ public class TextArea extends TextField {
 		lastText = null; // Cause calculateOffsets to recalculate the line breaks.
 
 		// The number of lines showed must be updated whenever the height is updated
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 		Drawable background = style.background;
 		float availableHeight = getHeight() - (background == null ? 0 : background.getBottomHeight() + background.getTopHeight());
 		linesShowing = (int)Math.floor(availableHeight / font.getLineHeight());
@@ -285,7 +286,7 @@ public class TextArea extends TextField {
 		super.calculateOffsets();
 		if (!this.text.equals(lastText)) {
 			this.lastText = text;
-			BitmapFont font = style.font;
+			MsdfFont font = style.font;
 			float maxWidthLine = this.getWidth()
 				- (style.background != null ? style.background.getLeftWidth() + style.background.getRightWidth() : 0);
 			linesBreak.clear();
@@ -385,7 +386,7 @@ public class TextArea extends TextField {
 	}
 
 	public float getCursorY () {
-		BitmapFont font = style.font;
+		MsdfFont font = style.font;
 		return -(cursorLine - firstLineShowing + 1) * font.getLineHeight();
 	}
 
@@ -395,7 +396,7 @@ public class TextArea extends TextField {
 			moveOffset = -1;
 
 			Drawable background = style.background;
-			BitmapFont font = style.font;
+			MsdfFont font = style.font;
 
 			float height = getHeight();
 

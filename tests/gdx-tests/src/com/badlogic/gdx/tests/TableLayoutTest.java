@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -55,7 +56,7 @@ public class TableLayoutTest extends GdxTest {
 
 		TextureRegion upRegion = skin.getRegion("default-slider-knob");
 		TextureRegion downRegion = skin.getRegion("default-slider-knob");
-		BitmapFont buttonFont = skin.getFont("default-font");
+		MsdfFont buttonFont = skin.getMsdfFont("default-font");
 
 		TextButton button = new TextButton("Button 1", skin);
 		button.addListener(new InputListener() {
