@@ -116,7 +116,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 	 * with respect to the current screen resolution.
 	 * <p>
 	 * The defaultShader specifies the shader to use. Note that the names for uniforms for this default shader are different than
-	 * the ones expect for shaders set with {@link #setShader(ShaderProgram)}. See {@link SpriteBatch#createDefaultShader()}.
+	 * the ones expect for shaders set with {@link #setShader(ShaderProgram)}. See {@link SpriteBatch#createDefaultShader(int, int, int)}.
 	 * @param maxVertices The max number of vertices in a single batch. Max of 32767.
 	 * @param maxTriangles The max number of triangles in a single batch.
 	 * @param defaultShader The default shader to use. This is not owned by the PolygonSpriteBatch and must be disposed separately.
@@ -139,7 +139,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		triangles = new short[maxTriangles * 3];
 
 		if (defaultShader == null) {
-			shader = SpriteBatch.createDefaultShader();
+			shader = SpriteBatch.createDefaultShader(1, 1, 1);
 			ownsShader = true;
 		} else
 			shader = defaultShader;

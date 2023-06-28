@@ -22,9 +22,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
-import com.badlogic.gdx.graphics.g2d.msdf.MsdfShader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -44,16 +44,6 @@ public class Label extends Widget {
 	static protected final Color tempColor = new Color();
 	static private final GlyphLayout prefSizeLayout = new GlyphLayout();
 
-	static private MsdfShaderProvider defaultMsdfShaderProvider = new DefaultMsdfShaderProvider();
-
-	public static void setDefaultMsdfShaderProvider(MsdfShaderProvider shaderProvider) {
-		defaultMsdfShaderProvider = shaderProvider;
-	}
-
-	public static MsdfShaderProvider getDefaultMsdfShaderProvider() {
-		return defaultMsdfShaderProvider;
-	}
-
 	private LabelStyle style;
 	private final GlyphLayout layout = new GlyphLayout();
 	private float prefWidth, prefHeight;
@@ -69,53 +59,27 @@ public class Label extends Widget {
 	private boolean fontScaleChanged = false;
 	private @Null String ellipsis;
 
-	private MsdfShader shader;
-
 	public Label (@Null CharSequence text, Skin skin) {
-		this(text, skin.get(LabelStyle.class), null);
-	}
-
-	public Label (@Null CharSequence text, Skin skin, MsdfShader shader) {
-		this(text, skin.get(LabelStyle.class), shader);
+		this(text, skin.get(LabelStyle.class));
 	}
 
 	public Label (@Null CharSequence text, Skin skin, String styleName) {
-		this(text, skin.get(styleName, LabelStyle.class), null);
-	}
-	public Label (@Null CharSequence text, Skin skin, String styleName, MsdfShader shader) {
-		this(text, skin.get(styleName, LabelStyle.class), shader);
+		this(text, skin.get(styleName, LabelStyle.class));
 	}
 
 	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name from the skin and the specified
 	 * color. */
 	public Label (@Null CharSequence text, Skin skin, String fontName, Color color) {
-		this(text, new LabelStyle(skin.getMsdfFont(fontName), color), null);
-	}
-
-	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name from the skin and the specified
-	 * color. */
-	public Label (@Null CharSequence text, Skin skin, String fontName, Color color, MsdfShader shader) {
-		this(text, new LabelStyle(skin.getMsdfFont(fontName), color), shader);
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), color));
 	}
 
 	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name and the specified color from the
 	 * skin. */
 	public Label (@Null CharSequence text, Skin skin, String fontName, String colorName) {
-		this(text, new LabelStyle(skin.getMsdfFont(fontName), skin.getColor(colorName)), null);
-	}
-
-	/** Creates a label, using a {@link LabelStyle} that has a BitmapFont with the specified name and the specified color from the
-	 * skin. */
-	public Label (@Null CharSequence text, Skin skin, String fontName, String colorName, @Null MsdfShader shader) {
-		this(text, new LabelStyle(skin.getMsdfFont(fontName), skin.getColor(colorName)), shader);
+		this(text, new LabelStyle(skin.getMsdfFont(fontName), skin.getColor(colorName)));
 	}
 
 	public Label (@Null CharSequence text, LabelStyle style) {
-		this(text, style, null);
-	}
-
-	public Label (@Null CharSequence text, LabelStyle style, @Null MsdfShader shader) {
-		this.shader = shader != null ? shader : defaultMsdfShaderProvider.getShader();
 		if (text != null) this.text.append(text);
 		style = new LabelStyle(style);
 		setStyle(style);
@@ -307,9 +271,11 @@ public class Label extends Widget {
 			batch.setColor(color.r, color.g, color.b, color.a);
 			style.background.draw(batch, getX(), getY(), getWidth(), getHeight());
 		}
+		cache.tint(color);
 		cache.setPosition(getX(), getY());
-		batch.setShader(shader);
-		shader.updateForStyle(style);
+		if (batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setLabelStyle(style);
+		}
 		cache.draw(batch);
 		batch.setShader(null);
 	}
@@ -420,14 +386,6 @@ public class Label extends Widget {
 		fontScaleChanged = true;
 		this.fontScaleY = fontScaleY;
 		invalidateHierarchy();
-	}
-
-	public void setShader(MsdfShader shader) {
-		this.shader = shader;
-	}
-
-	public MsdfShader getShader() {
-		return shader;
 	}
 
 	/** When non-null the text will be truncated "..." if it does not fit within the width of the label. Wrapping will not occur

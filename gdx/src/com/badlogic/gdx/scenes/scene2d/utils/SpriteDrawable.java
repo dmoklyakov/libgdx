@@ -19,12 +19,18 @@ package com.badlogic.gdx.scenes.scene2d.utils;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasSprite;
+import com.badlogic.gdx.scenes.scene2d.ui.UiParams;
+
+import org.jetbrains.annotations.NotNull;
 
 /** Drawable for a {@link Sprite}.
  * @author Nathan Sweet */
 public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 	private Sprite sprite;
+
+	private UiParams uiParams = new UiParams();
 
 	/** Creates an uninitialized SpriteDrawable. The sprite must be set before use. */
 	public SpriteDrawable () {
@@ -52,8 +58,15 @@ public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 		sprite.setPackedColor(oldColor);
 	}
 
+	protected void updateUiParams(Batch batch) {
+		if (batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setUiParams(uiParams);
+		}
+	}
+
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
 		float scaleY, float rotation) {
+		updateUiParams(batch);
 
 		Color spriteColor = sprite.getColor();
 		float oldColor = spriteColor.toFloatBits();
@@ -93,5 +106,13 @@ public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 		drawable.setTopHeight(getTopHeight());
 		drawable.setBottomHeight(getBottomHeight());
 		return drawable;
+	}
+
+	public UiParams getUiParams() {
+		return uiParams;
+	}
+
+	public void setUiParams(@NotNull UiParams uiParams) {
+		this.uiParams = uiParams;
 	}
 }

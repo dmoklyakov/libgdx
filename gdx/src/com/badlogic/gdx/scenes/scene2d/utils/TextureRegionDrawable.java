@@ -20,14 +20,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.UiParams;
+
+import org.jetbrains.annotations.NotNull;
 
 /** Drawable for a {@link TextureRegion}.
  * @author Nathan Sweet */
 public class TextureRegionDrawable extends BaseDrawable implements TransformDrawable {
 	private TextureRegion region;
+
+	@NotNull
+	private UiParams uiParams = new UiParams();
 
 	/** Creates an uninitialized TextureRegionDrawable. The texture region must be set before use. */
 	public TextureRegionDrawable () {
@@ -46,12 +53,20 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 		setRegion(drawable.region);
 	}
 
+	protected void updateUiParams(Batch batch) {
+		if (batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setUiParams(uiParams);
+		}
+	}
+
 	public void draw (Batch batch, float x, float y, float width, float height) {
+		updateUiParams(batch);
 		batch.draw(region, x, y, width, height);
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
 		float scaleY, float rotation) {
+		updateUiParams(batch);
 		batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 	}
 
@@ -82,5 +97,13 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 		drawable.setTopHeight(getTopHeight());
 		drawable.setBottomHeight(getBottomHeight());
 		return drawable;
+	}
+
+	public UiParams getUiParams() {
+		return uiParams;
+	}
+
+	public void setUiParams(@NotNull UiParams uiParams) {
+		this.uiParams = uiParams;
 	}
 }

@@ -40,7 +40,7 @@ public class CustomShading {
 	String missingSamplerMessage;
 
 	public CustomShading () {
-		shader = SpriteBatch.createDefaultShader();
+		shader = SpriteBatch.createDefaultShader(1, 1, 1);
 		vertexShaderCode = defaultVertexShaderCode = shader.getVertexShaderSource();
 		fragmentShaderCode = defaultFragmentShaderCode = shader.getFragmentShaderSource();
 	}

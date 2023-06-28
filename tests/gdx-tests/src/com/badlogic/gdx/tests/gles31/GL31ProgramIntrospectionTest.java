@@ -34,7 +34,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 public class GL31ProgramIntrospectionTest extends GdxTest {
 	@Override
 	public void create () {
-		ShaderProgram shader = SpriteBatch.createDefaultShader();
+		ShaderProgram shader = SpriteBatch.createDefaultShader(1, 1, 1);
 		int program = shader.getHandle();
 
 		IntBuffer int1 = BufferUtils.newIntBuffer(1);
