@@ -78,8 +78,8 @@ public class UiParams {
 
     public float getContentScaleForSize(float width, float height) {
         if (autoScaleContent) {
-            float minSide = Math.min(width, height);
-            return (minSide - borderThickness * 2f - borderOutSoftness * 2f) / minSide;
+            float maxSide = Math.max(width, height);
+            return (maxSide - borderThickness * 2f - borderOutSoftness * 2f) / maxSide;
         } else {
             return contentScale;
         }
