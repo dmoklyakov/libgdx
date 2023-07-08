@@ -31,6 +31,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector4;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.UiParams;
@@ -61,18 +62,18 @@ public class SpriteBatch implements Batch {
     int idx = 0;
     private final Mesh mesh;
     final float[] vertices;
-    private final int VERTEX_SIZE = 2 + 1 + 2; // x, y, color, u, v
-    private final int SPRITE_SIZE = 4 * (VERTEX_SIZE + 1 + 1); // 1 is for the label style index, 1 is for ui params index.
-    private final int SPRITE_SIZE_TEX_ARRAY = 4 * (VERTEX_SIZE + 1 + 1 + 1); // 1 is for the texture unit index, 1 is for the label style index, 1 is for ui params index.
+    protected final int VERTEX_SIZE = 2 + 1 + 2; // x, y, color, u, v
+    protected final int SPRITE_SIZE = 4 * (VERTEX_SIZE + 1 + 1); // 1 is for the label style index, 1 is for ui params index.
+    protected final int SPRITE_SIZE_TEX_ARRAY = 4 * (VERTEX_SIZE + 1 + 1 + 1); // 1 is for the texture unit index, 1 is for the label style index, 1 is for ui params index.
     /**
      * The maximum number of available texture units for the fragment shader.
      * Also used as "max MSDF params amount" for simplicity.
      */
-    private static int maxTextureUnits = -1;
+    protected static int maxTextureUnits = -1;
     private static int maxVertexUniformVectors = -1;
     int msdfParamsComponents = 4 * 5;
     private static int maxMsdfParams = -1;
-    int uiParamsComponents = 4 * 4;
+    int uiParamsComponents = 4 * 5;
     private static int maxUiParams = -1;
 
     /**
@@ -82,6 +83,7 @@ public class SpriteBatch implements Batch {
     private final Label.LabelStyle[] labelStylesArray;
     private final UiParams[] uiParamsArray;
     private final Vector4[] regionsArray; // Used with uiParamsArray only.
+    private final Vector4[] positionsArray; // Used with uiParamsArray only.
     private int labelStylesCount = 0;
     private int uiParamsCount = 0;
 
@@ -95,11 +97,12 @@ public class SpriteBatch implements Batch {
      */
     private final IntBuffer textureUnitIndicesBuffer;
 
-    private float invTexWidth = 0, invTexHeight = 0;
+    protected float invTexWidth = 0, invTexHeight = 0;
 
     boolean drawing = false;
 
     private final Matrix4 transformMatrix = new Matrix4();
+    private final Matrix4 invTransformMatrix = new Matrix4();
     private final Matrix4 projectionMatrix = new Matrix4();
     private final Matrix4 combinedMatrix = new Matrix4();
 
@@ -215,8 +218,10 @@ public class SpriteBatch implements Batch {
         labelStylesArray = new Label.LabelStyle[maxMsdfParams];
         uiParamsArray = new UiParams[maxUiParams];
         regionsArray = new Vector4[maxUiParams];
+        positionsArray = new Vector4[maxUiParams];
         for (int i = 0; i < maxUiParams; i++) {
             regionsArray[i] = new Vector4();
+            positionsArray[i] = new Vector4();
         }
 
         VertexDataType vertexDataType = (Gdx.gl30 != null) ? VertexDataType.VertexBufferObjectWithVAO : VertexDataType.VertexArray;
@@ -352,12 +357,6 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(texture);
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(
-                srcX * texture.getWidth(),
-                srcY * texture.getHeight(),
-                srcWidth * texture.getWidth(),
-                srcHeight * texture.getHeight()
-        );
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -433,6 +432,23 @@ public class SpriteBatch implements Batch {
         x4 += worldOriginX;
         y4 += worldOriginY;
 
+
+        float xMin = Math.min(Math.min(x1, x2), Math.min(x3, x4));
+        float yMin = Math.min(Math.min(y1, y2), Math.min(y3, y4));
+        float xMax = Math.max(Math.max(x1, x2), Math.max(x3, x4));
+        float yMax = Math.max(Math.max(y1, y2), Math.max(y3, y4));
+
+        final float upi = activateUiParams(
+                srcX * texture.getWidth(),
+                srcY * texture.getHeight(),
+                srcWidth * texture.getWidth(),
+                srcHeight * texture.getHeight(),
+                xMin,
+                yMin,
+                xMax - xMin,
+                yMax - yMin
+        );
+
         float u = srcX * invTexWidth;
         float v = (srcY + srcHeight) * invTexHeight;
         float u2 = (srcX + srcWidth) * invTexWidth;
@@ -505,7 +521,11 @@ public class SpriteBatch implements Batch {
                 srcX * texture.getWidth(),
                 srcY * texture.getHeight(),
                 srcWidth * texture.getWidth(),
-                srcHeight * texture.getHeight()
+                srcHeight * texture.getHeight(),
+                x,
+                y,
+                width,
+                height
         );
 
         float u = srcX * invTexWidth;
@@ -581,7 +601,11 @@ public class SpriteBatch implements Batch {
                 srcX * texture.getWidth(),
                 srcY * texture.getHeight(),
                 srcWidth * texture.getWidth(),
-                srcHeight * texture.getHeight()
+                srcHeight * texture.getHeight(),
+                x,
+                y,
+                srcWidth,
+                srcHeight
         );
 
         final float u = srcX * invTexWidth;
@@ -645,7 +669,11 @@ public class SpriteBatch implements Batch {
                 u * texture.getWidth(),
                 v * texture.getHeight(),
                 u2 * texture.getWidth(),
-                v2 * texture.getHeight()
+                v2 * texture.getHeight(),
+                x,
+                y,
+                width,
+                height
         );
 
         final float fx2 = x + width;
@@ -706,7 +734,7 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(texture);
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(texture);
+        final float upi = activateUiParams(texture, x, y, width, height);
 
         final float fx2 = x + width;
         final float fy2 = y + height;
@@ -765,7 +793,17 @@ public class SpriteBatch implements Batch {
         // Assigns a texture unit to this texture, flushing if none is available
         final float ti = (float) activateTexture(texture);
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(texture);
+        float xMin = Float.MAX_VALUE;
+        float yMin = Float.MAX_VALUE;
+        float xMax = -Float.MAX_VALUE;
+        float yMax = -Float.MAX_VALUE;
+        for (int i = offset; i < offset + count; i += VERTEX_SIZE) {
+            xMin = Math.min(xMin, spriteVertices[i]);
+            yMin = Math.min(yMin, spriteVertices[i + 1]);
+            xMax = Math.max(xMax, spriteVertices[i]);
+            yMax = Math.max(yMax, spriteVertices[i + 1]);
+        }
+        final float upi = activateUiParams(texture, xMin, yMin, xMax - xMin, yMax - yMin);
 
         // spriteVertexSize is the number of floats an unmodified input vertex consists of,
         // therefore this loop iterates over the vertices stored in parameter spriteVertices.
@@ -778,9 +816,7 @@ public class SpriteBatch implements Batch {
             idx += VERTEX_SIZE;
 
             // Inject texture unit index and advance idx
-            if (maxTextureUnits > 1) {
-                vertices[idx++] = ti;
-            }
+            if (maxTextureUnits > 1) {vertices[idx++] = ti;}
             vertices[idx++] = lsi;
             vertices[idx++] = upi;
         }
@@ -802,7 +838,7 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(region.getTexture());
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(region);
+        final float upi = activateUiParams(region, x, y, width, height);
 
         final float fx2 = x + width;
         final float fy2 = y + height;
@@ -862,7 +898,6 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(region.getTexture());
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(region);
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -931,6 +966,12 @@ public class SpriteBatch implements Batch {
         y3 += worldOriginY;
         x4 += worldOriginX;
         y4 += worldOriginY;
+
+        float xMin = Math.min(Math.min(x1, x2), Math.min(x3, x4));
+        float yMin = Math.min(Math.min(y1, y2), Math.min(y3, y4));
+        float xMax = Math.max(Math.max(x1, x2), Math.max(x3, x4));
+        float yMax = Math.max(Math.max(y1, y2), Math.max(y3, y4));
+        final float upi = activateUiParams(region, xMin, yMin, xMax - xMin, yMax - yMin);
 
         final float u = region.getU();
         final float v = region.getV2();
@@ -988,7 +1029,6 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(region.getTexture());
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(region);
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -1063,6 +1103,12 @@ public class SpriteBatch implements Batch {
         y3 += worldOriginY;
         x4 += worldOriginX;
         y4 += worldOriginY;
+
+        float xMin = Math.min(Math.min(x1, x2), Math.min(x3, x4));
+        float yMin = Math.min(Math.min(y1, y2), Math.min(y3, y4));
+        float xMax = Math.max(Math.max(x1, x2), Math.max(x3, x4));
+        float yMax = Math.max(Math.max(y1, y2), Math.max(y3, y4));
+        final float upi = activateUiParams(region, xMin, yMin, xMax - xMin, yMax - yMin);
 
         float u1, v1, u2, v2, u3, v3, u4, v4;
         if (clockwise) {
@@ -1135,7 +1181,6 @@ public class SpriteBatch implements Batch {
 
         final float ti = activateTexture(region.getTexture());
         final float lsi = activateLabelStyle();
-        final float upi = activateUiParams(region);
 
         // construct corner points
         float x1 = transform.m02;
@@ -1146,6 +1191,11 @@ public class SpriteBatch implements Batch {
         float y3 = transform.m10 * width + transform.m11 * height + transform.m12;
         float x4 = transform.m00 * width + transform.m02;
         float y4 = transform.m10 * width + transform.m12;
+        float xMin = Math.min(Math.min(x1, x2), Math.min(x3, x4));
+        float yMin = Math.min(Math.min(y1, y2), Math.min(y3, y4));
+        float xMax = Math.max(Math.max(x1, x2), Math.max(x3, x4));
+        float yMax = Math.max(Math.max(y1, y2), Math.max(y3, y4));
+        final float upi = activateUiParams(region, xMin, yMin, xMax - xMin, yMax - yMin);
 
         float u = region.getU();
         float v = region.getV2();
@@ -1194,7 +1244,7 @@ public class SpriteBatch implements Batch {
     /**
      * Flushes if the vertices array cannot hold an additional sprite ((spriteVertexSize + 1) * 4 vertices) anymore.
      */
-    private void flushIfFull() {
+    protected void flushIfFull() {
         // original Sprite attribute size plus one extra float per sprite vertex
         int spriteSize = maxTextureUnits > 1 ? SPRITE_SIZE_TEX_ARRAY : SPRITE_SIZE;
         if (vertices.length - idx < spriteSize + spriteSize / VERTEX_SIZE) {
@@ -1243,20 +1293,29 @@ public class SpriteBatch implements Batch {
 
     private void bindUiParams(int index, ShaderProgram shader) { // TODO: Use uniform array.
         UiParams params = uiParamsArray[index];
-        Vector4 region = regionsArray[index];
-        Gdx.gl.glUniform4f(
-                shader.fetchUniformLocation("u_uiParams[" + index + "].region", true),
-                region.x,
-                region.y,
-                region.z,
-                region.w
+        Vector4 regionRect = regionsArray[index];
+        Vector4 positionRect = positionsArray[index];
+        Gdx.gl.glUniform4f( // TODO: bind separately, use actual Rect class.
+                shader.fetchUniformLocation("u_uiParams[" + index + "].regionRect", true),
+                regionRect.x,
+                regionRect.y,
+                regionRect.z,
+                regionRect.w
         );
+        Gdx.gl.glUniform4f( // TODO: bind separately, use actual Rect class.
+                shader.fetchUniformLocation("u_uiParams[" + index + "].positionRect", true),
+                positionRect.x,
+                positionRect.y,
+                positionRect.z,
+                positionRect.w
+        );
+        Vector4 corners = params.getAutoCornerRadii(positionRect.z, positionRect.w);
         Gdx.gl.glUniform4f(
                 shader.fetchUniformLocation("u_uiParams[" + index + "].cornerRadii", true),
-                params.getAutoCornerRadii(region.z, region.w).z, // bottom right in shader
-                params.getAutoCornerRadii(region.z, region.w).y, // top right in shader
-                params.getAutoCornerRadii(region.z, region.w).w, // bottom left in shader
-                params.getAutoCornerRadii(region.z, region.w).x  // top left in shader
+                corners.z, // bottom right in shader
+                corners.y, // top right in shader
+                corners.w, // bottom left in shader
+                corners.x  // top left in shader
         );
         Gdx.gl.glUniform4f(
                 shader.fetchUniformLocation("u_uiParams[" + index + "].borderColor", true),
@@ -1267,7 +1326,7 @@ public class SpriteBatch implements Batch {
         );
         Gdx.gl.glUniform4f(
                 shader.fetchUniformLocation("u_uiParams[" + index + "].data", true),
-                params.getContentScaleForSize(region.z, region.w),
+                params.getContentScaleForSize(positionRect.z, positionRect.w),
                 params.getBorderOutSoftness(),
                 params.getBorderThickness(),
                 params.getBorderInSoftness()
@@ -1340,7 +1399,7 @@ public class SpriteBatch implements Batch {
      * @param texture The texture that shall be loaded into the cache, if it is not already loaded.
      * @return The texture slot that has been allocated to the selected texture
      */
-    private int activateTexture(Texture texture) {
+    protected int activateTexture(Texture texture) {
         invTexWidth = 1.0f / texture.getWidth();
         invTexHeight = 1.0f / texture.getHeight();
         // This is our identifier for the textures
@@ -1400,7 +1459,7 @@ public class SpriteBatch implements Batch {
         }
     }
 
-    private int activateLabelStyle() {
+    protected int activateLabelStyle() {
         if (currentLabelStyle == null) {
             return -1;
         }
@@ -1410,7 +1469,7 @@ public class SpriteBatch implements Batch {
                 return i;
             }
         }
-        if (labelStylesCount >= maxMsdfParams) {
+        if (labelStylesCount >= maxMsdfParams - 1) {
             flush();
         }
         labelStylesArray[labelStylesCount] = currentLabelStyle;
@@ -1419,36 +1478,65 @@ public class SpriteBatch implements Batch {
         return labelStylesCount - 1;
     }
 
-    private int activateUiParams(Texture texture) {
-        return activateUiParams(0f, 0f, texture.getWidth(), texture.getHeight());
+    protected int activateUiParams(
+            Texture texture,
+            float regionX,
+            float regionY,
+            float regionWidth,
+            float regionHeight
+    ) {
+        return activateUiParams(0f, 0f, texture.getWidth(), texture.getHeight(), regionX, regionY, regionWidth, regionHeight);
     }
 
-    private int activateUiParams(TextureRegion region) {
+    protected int activateUiParams(
+            TextureRegion region,
+            float regionX,
+            float regionY,
+            float regionWidth,
+            float regionHeight
+    ) {
         return activateUiParams(
                 region.getRegionX(),
                 region.getRegionY(),
                 region.getRegionWidth(),
-                region.getRegionHeight()
+                region.getRegionHeight(),
+                regionX,
+                regionY,
+                regionWidth,
+                regionHeight
         );
     }
 
-    private Vector4 tmpVector4 = new Vector4();
-    private int activateUiParams(float srcX, float srcY, float srcWidth, float srcHeight) {
+    private final Vector4 tmpVector1 = new Vector4();
+    private final Vector4 tmpVector2 = new Vector4();
+
+    protected int activateUiParams(
+            float srcX,
+            float srcY,
+            float srcWidth,
+            float srcHeight,
+            float regionX,
+            float regionY,
+            float regionWidth,
+            float regionHeight
+    ) {
         if (currentUiParams == null || currentUiParams.isDefault()) {
             return -1;
         }
-        tmpVector4.set(srcX, srcY, srcWidth, srcHeight);
+        tmpVector1.set(srcX, srcY, srcWidth, srcHeight);
+        tmpVector2.set(regionX, regionY, regionWidth, regionHeight);
         for (int i = 0; i < uiParamsCount; i++) {
-            if (tmpVector4.equals(regionsArray[i]) && currentUiParams.equals(uiParamsArray[i])) {
+            if (tmpVector1.equals(regionsArray[i]) && tmpVector2.equals(positionsArray[i]) && currentUiParams.equals(uiParamsArray[i])) {
                 currentUiParams = null;
                 return i;
             }
         }
-        if (uiParamsCount >= maxUiParams) {
+        if (uiParamsCount >= maxUiParams - 1) {
             flush();
         }
         uiParamsArray[uiParamsCount] = currentUiParams;
-        regionsArray[uiParamsCount].set(tmpVector4);
+        regionsArray[uiParamsCount].set(tmpVector1);
+        positionsArray[uiParamsCount].set(tmpVector2);
         uiParamsCount++;
         currentUiParams = null;
         return uiParamsCount - 1;
@@ -1561,6 +1649,12 @@ public class SpriteBatch implements Batch {
             flush();
         }
         transformMatrix.set(transform);
+        invTransformMatrix.set(transformMatrix);
+        try {
+            invTransformMatrix.inv();
+        } catch (Exception e) {
+            invTransformMatrix.idt();
+        }
         if (drawing) {
             setupMatrices();
         }
@@ -1582,11 +1676,13 @@ public class SpriteBatch implements Batch {
         combinedMatrix.set(projectionMatrix).mul(transformMatrix);
         if (customShader != null) {
             customShader.setUniformMatrix("u_projTrans", combinedMatrix);
+            customShader.setUniformMatrix("u_invTransform", invTransformMatrix);
             if (maxTextureUnits > 1) {
                 Gdx.gl20.glUniform1iv(customShader.fetchUniformLocation("u_textures", true), maxTextureUnits, textureUnitIndicesBuffer);
             }
         } else {
             shader.setUniformMatrix("u_projTrans", combinedMatrix);
+            shader.setUniformMatrix("u_invTransform", invTransformMatrix);
             if (maxTextureUnits > 1) {
                 Gdx.gl20.glUniform1iv(shader.fetchUniformLocation("u_textures", true), maxTextureUnits, textureUnitIndicesBuffer);
             }
@@ -1676,15 +1772,19 @@ public class SpriteBatch implements Batch {
     }
 
     /** Returns a new instance of the default shader used by TextureArrayMsdfSpriteBatch when no shader is specified. */
-    public static ShaderProgram createDefaultShader (int maxTextureUnits, int maxMsdfParams, int maxUiParams) {
+    public static ShaderProgram createDefaultShader(int maxTextureUnits, int maxMsdfParams, int maxUiParams) {
         String vertexShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g2d/shaders/sprite_batch.vertex.glsl").readString();
         String fragmentShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g2d/shaders/sprite_batch.fragment.glsl").readString();
-        String prependPart1 = Gdx.app.getType() == Application.ApplicationType.Desktop ? "#version 150\n" : "#version 320 es\n";
-        String prependPart2 = Gdx.graphics.isGL30Available() ? "#define GLSL3\n" : "";
+        return createShader(maxTextureUnits, maxMsdfParams, maxUiParams, vertexShader, fragmentShader);
+    }
+
+    public static ShaderProgram createShader(int maxTextureUnits, int maxMsdfParams, int maxUiParams, String vertexShader, String fragmentShader) {
+        String prependPart1 = Gdx.app.getType() == Application.ApplicationType.Desktop ? "#version 150\n" : "#version 100\n";
+        //String prependPart2 = Gdx.graphics.isGL30Available() ? "#define GLSL3\n" : "";
         String prependPart3 = maxTextureUnits > 1 ? "#define TEXTURE_ARRAY\n#define MAX_TEXTURE_UNITS " + maxTextureUnits + "\n" : "";
         String prependPart4 = "#define MAX_MSDF_PARAMS " + maxMsdfParams + "\n";
         String prependPart5 = "#define MAX_UI_PARAMS " + maxUiParams + "\n";
-        String prependText = prependPart1 + prependPart2 + prependPart3 + prependPart4 + prependPart5;
+        String prependText = prependPart1 + /*prependPart2 + */prependPart3 + prependPart4 + prependPart5;
         ShaderProgram.prependVertexCode = prependText;
         ShaderProgram.prependFragmentCode = prependText;
 

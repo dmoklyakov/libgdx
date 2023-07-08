@@ -1,8 +1,5 @@
 #ifdef GL_ES
-    #define PRECISION mediump
-    precision PRECISION float;
-#else
-    #define PRECISION
+    precision mediump float;
 #endif
 
 #ifdef GLSL3

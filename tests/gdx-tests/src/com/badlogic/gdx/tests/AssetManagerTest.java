@@ -170,10 +170,10 @@ public class AssetManagerTest extends GdxTest implements AssetErrorListener {
 		}
 		frame++;
 
-		if (manager.isLoaded("data/g2d/monochrome.frag"))
-			batch.setShader(manager.get("data/g2d/monochrome.frag", ShaderProgram.class));
-		else
-			batch.setShader(null);
+//		if (manager.isLoaded("data/g2d/monochrome.frag"))
+//			batch.setShader(manager.get("data/g2d/monochrome.frag", ShaderProgram.class));
+//		else
+//			batch.setShader(null);
 
 		batch.begin();
 		if (manager.isLoaded("data/animation_gwt_lazy.png"))
