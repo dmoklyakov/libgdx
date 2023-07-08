@@ -140,7 +140,7 @@ void main()
         float actualBorderAlpha = inBorder * outBorder;
 
         params.borderColor.a = min(params.borderColor.a, actualBorderAlpha);
-        textureColor.a = 1.0 - borderDistance;
+        textureColor.a = min(1.0 - borderDistance, textureColor.a);
         textureColor = clamp(textureColor, 0.0, 1.0);
         outColor = blendBorder(textureColor, params.borderColor);
     } else {
