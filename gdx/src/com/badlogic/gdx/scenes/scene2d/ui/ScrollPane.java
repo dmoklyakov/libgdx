@@ -383,10 +383,10 @@ public class ScrollPane extends WidgetGroup {
 		Drawable bg = style.background, hScrollKnob = style.hScrollKnob, vScrollKnob = style.vScrollKnob;
 		float bgLeftWidth = 0, bgRightWidth = 0, bgTopHeight = 0, bgBottomHeight = 0;
 		if (bg != null) {
-			bgLeftWidth = bg.getLeftWidth();
-			bgRightWidth = bg.getRightWidth();
-			bgTopHeight = bg.getTopHeight();
-			bgBottomHeight = bg.getBottomHeight();
+			bgLeftWidth = bg.getPaddingOutLeft();
+			bgRightWidth = bg.getPaddingOutRight();
+			bgTopHeight = bg.getPaddingOutTop();
+			bgBottomHeight = bg.getPaddingOutBottom();
 		}
 		float width = getWidth(), height = getHeight();
 		actorArea.set(bgLeftWidth, bgBottomHeight, width - bgLeftWidth - bgRightWidth, height - bgTopHeight - bgBottomHeight);
@@ -595,7 +595,7 @@ public class ScrollPane extends WidgetGroup {
 
 		Drawable background = style.background;
 		if (background != null)
-			width = Math.max(width + background.getLeftWidth() + background.getRightWidth(), background.getMinWidth());
+			width = Math.max(width + background.getPaddingOutLeft() + background.getPaddingOutRight(), background.getMinWidth());
 
 		if (scrollY) {
 			float scrollbarWidth = 0;
@@ -615,7 +615,7 @@ public class ScrollPane extends WidgetGroup {
 
 		Drawable background = style.background;
 		if (background != null)
-			height = Math.max(height + background.getTopHeight() + background.getBottomHeight(), background.getMinHeight());
+			height = Math.max(height + background.getPaddingOutTop() + background.getPaddingOutBottom(), background.getMinHeight());
 
 		if (scrollX) {
 			float scrollbarHeight = 0;

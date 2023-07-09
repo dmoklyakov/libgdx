@@ -124,8 +124,8 @@ public class ProgressBar extends Widget implements Disableable {
 			float bgTopHeight = 0, bgBottomHeight = 0;
 			if (bg != null) {
 				drawRound(batch, bg, x + (width - bg.getMinWidth()) * 0.5f, y, bg.getMinWidth(), height);
-				bgTopHeight = bg.getTopHeight();
-				bgBottomHeight = bg.getBottomHeight();
+				bgTopHeight = bg.getPaddingOutTop();
+				bgBottomHeight = bg.getPaddingOutBottom();
 				height -= bgTopHeight + bgBottomHeight;
 			}
 
@@ -158,8 +158,8 @@ public class ProgressBar extends Widget implements Disableable {
 			float bgLeftWidth = 0, bgRightWidth = 0;
 			if (bg != null) {
 				drawRound(batch, bg, x, Math.round(y + (height - bg.getMinHeight()) * 0.5f), width, Math.round(bg.getMinHeight()));
-				bgLeftWidth = bg.getLeftWidth();
-				bgRightWidth = bg.getRightWidth();
+				bgLeftWidth = bg.getPaddingOutLeft();
+				bgRightWidth = bg.getPaddingOutRight();
 				width -= bgLeftWidth + bgRightWidth;
 			}
 

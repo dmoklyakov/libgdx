@@ -153,7 +153,7 @@ public class TextField extends Widget implements Disableable {
 	protected int letterUnderCursor (float x) {
 		x -= textOffset + fontOffset - style.font.getData().cursorX - glyphPositions.get(visibleTextStart);
 		Drawable background = getBackgroundDrawable();
-		if (background != null) x -= style.background.getLeftWidth();
+		if (background != null) x -= style.background.getPaddingOutLeft();
 		int n = this.glyphPositions.size;
 		float[] glyphPositions = this.glyphPositions.items;
 		for (int i = 1; i < n; i++) {
@@ -233,7 +233,7 @@ public class TextField extends Widget implements Disableable {
 	protected void calculateOffsets () {
 		float visibleWidth = getWidth();
 		Drawable background = getBackgroundDrawable();
-		if (background != null) visibleWidth -= background.getLeftWidth() + background.getRightWidth();
+		if (background != null) visibleWidth -= background.getPaddingOutLeft() + background.getPaddingOutRight();
 
 		int glyphCount = glyphPositions.size;
 		float[] glyphPositions = this.glyphPositions.items;
@@ -330,8 +330,8 @@ public class TextField extends Widget implements Disableable {
 		float bgLeftWidth = 0, bgRightWidth = 0;
 		if (background != null) {
 			background.draw(batch, x, y, width, height);
-			bgLeftWidth = background.getLeftWidth();
-			bgRightWidth = background.getRightWidth();
+			bgLeftWidth = background.getPaddingOutLeft();
+			bgRightWidth = background.getPaddingOutRight();
 		}
 
 		float textY = getTextY(font, background);
@@ -365,8 +365,8 @@ public class TextField extends Widget implements Disableable {
 		float height = getHeight();
 		float textY = textHeight / 2 + font.getDescent();
 		if (background != null) {
-			float bottom = background.getBottomHeight();
-			textY = textY + (height - background.getTopHeight() - bottom) / 2 + bottom;
+			float bottom = background.getPaddingOutBottom();
+			textY = textY + (height - background.getPaddingOutTop() - bottom) / 2 + bottom;
 		} else {
 			textY = textY + height / 2;
 		}
@@ -718,17 +718,17 @@ public class TextField extends Widget implements Disableable {
 	public float getPrefHeight () {
 		float topAndBottom = 0, minHeight = 0;
 		if (style.background != null) {
-			topAndBottom = Math.max(topAndBottom, style.background.getBottomHeight() + style.background.getTopHeight());
+			topAndBottom = Math.max(topAndBottom, style.background.getPaddingOutBottom() + style.background.getPaddingOutTop());
 			minHeight = Math.max(minHeight, style.background.getMinHeight());
 		}
 		if (style.focusedBackground != null) {
 			topAndBottom = Math.max(topAndBottom,
-				style.focusedBackground.getBottomHeight() + style.focusedBackground.getTopHeight());
+				style.focusedBackground.getPaddingOutBottom() + style.focusedBackground.getPaddingOutTop());
 			minHeight = Math.max(minHeight, style.focusedBackground.getMinHeight());
 		}
 		if (style.disabledBackground != null) {
 			topAndBottom = Math.max(topAndBottom,
-				style.disabledBackground.getBottomHeight() + style.disabledBackground.getTopHeight());
+				style.disabledBackground.getPaddingOutBottom() + style.disabledBackground.getPaddingOutTop());
 			minHeight = Math.max(minHeight, style.disabledBackground.getMinHeight());
 		}
 		return Math.max(topAndBottom + textHeight, minHeight);

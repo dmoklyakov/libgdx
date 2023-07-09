@@ -19,7 +19,6 @@ package com.badlogic.gdx.scenes.scene2d.ui;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.Rectangle;
@@ -177,7 +176,7 @@ public class List<T> extends Widget implements Cullable {
 		Drawable selectedDrawable = style.selection;
 
 		itemHeight = font.getCapHeight() - font.getDescent() * 2;
-		itemHeight += selectedDrawable.getTopHeight() + selectedDrawable.getBottomHeight();
+		itemHeight += selectedDrawable.getPaddingOutTop() + selectedDrawable.getPaddingOutBottom();
 
 		prefWidth = 0;
 		Pool<GlyphLayout> layoutPool = Pools.get(GlyphLayout.class);
@@ -187,13 +186,13 @@ public class List<T> extends Widget implements Cullable {
 			prefWidth = Math.max(layout.width, prefWidth);
 		}
 		layoutPool.free(layout);
-		prefWidth += selectedDrawable.getLeftWidth() + selectedDrawable.getRightWidth();
+		prefWidth += selectedDrawable.getPaddingOutLeft() + selectedDrawable.getPaddingOutRight();
 		prefHeight = items.size * itemHeight;
 
 		Drawable background = style.background;
 		if (background != null) {
-			prefWidth = Math.max(prefWidth + background.getLeftWidth() + background.getRightWidth(), background.getMinWidth());
-			prefHeight = Math.max(prefHeight + background.getTopHeight() + background.getBottomHeight(), background.getMinHeight());
+			prefWidth = Math.max(prefWidth + background.getPaddingOutLeft() + background.getPaddingOutRight(), background.getMinWidth());
+			prefHeight = Math.max(prefHeight + background.getPaddingOutTop() + background.getPaddingOutBottom(), background.getMinHeight());
 		}
 	}
 
@@ -215,14 +214,14 @@ public class List<T> extends Widget implements Cullable {
 
 		Drawable background = style.background;
 		if (background != null) {
-			float leftWidth = background.getLeftWidth();
+			float leftWidth = background.getPaddingOutLeft();
 			x += leftWidth;
-			itemY -= background.getTopHeight();
-			width -= leftWidth + background.getRightWidth();
+			itemY -= background.getPaddingOutTop();
+			width -= leftWidth + background.getPaddingOutRight();
 		}
 
-		float textOffsetX = selectedDrawable.getLeftWidth(), textWidth = width - textOffsetX - selectedDrawable.getRightWidth();
-		float textOffsetY = selectedDrawable.getTopHeight() - font.getDescent();
+		float textOffsetX = selectedDrawable.getPaddingOutLeft(), textWidth = width - textOffsetX - selectedDrawable.getPaddingOutRight();
+		float textOffsetY = selectedDrawable.getPaddingOutTop() - font.getDescent();
 
 		font.setColor(fontColorUnselected.r, fontColorUnselected.g, fontColorUnselected.b, fontColorUnselected.a * parentAlpha);
 		for (int i = 0; i < items.size; i++) {
@@ -332,8 +331,8 @@ public class List<T> extends Widget implements Cullable {
 		float height = getHeight();
 		Drawable background = List.this.style.background;
 		if (background != null) {
-			height -= background.getTopHeight() + background.getBottomHeight();
-			y -= background.getBottomHeight();
+			height -= background.getPaddingOutTop() + background.getPaddingOutBottom();
+			y -= background.getPaddingOutBottom();
 		}
 		int index = (int)((height - y) / itemHeight);
 		if (index < 0 || index >= items.size) return -1;

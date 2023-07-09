@@ -26,21 +26,36 @@ public interface Drawable {
 	 * mixing its own color. */
 	public void draw (Batch batch, float x, float y, float width, float height);
 
-	public float getLeftWidth ();
+	public float getPaddingOutLeft();
 
-	public void setLeftWidth (float leftWidth);
+	public void setPaddingOutLeft(float paddingOutLeft);
+	public float getPaddingOutTop();
 
-	public float getRightWidth ();
+	public void setPaddingOutTop(float paddingOutTop);
 
-	public void setRightWidth (float rightWidth);
+	public float getPaddingOutRight();
 
-	public float getTopHeight ();
+	public void setPaddingOutRight(float paddingOutRight);
 
-	public void setTopHeight (float topHeight);
+	public float getPaddingOutBottom();
 
-	public float getBottomHeight ();
+	public void setPaddingOutBottom(float paddingOutBottom);
 
-	public void setBottomHeight (float bottomHeight);
+	public float getPaddingInLeft();
+
+	public void setPaddingInLeft(float paddingInLeft);
+
+	public float getPaddingInRight();
+
+	public void setPaddingInRight(float paddingInRight);
+
+	public float getPaddingInTop();
+
+	public void setPaddingInTop(float paddingInTop);
+
+	public float getPaddingInBottom();
+
+	public void setPaddingInBottom(float paddingInBottom);
 
 	public float getMinWidth ();
 
@@ -49,4 +64,5 @@ public interface Drawable {
 	public float getMinHeight ();
 
 	public void setMinHeight (float minHeight);
+
 }

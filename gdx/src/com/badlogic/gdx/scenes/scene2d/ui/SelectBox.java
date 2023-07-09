@@ -21,7 +21,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
 import com.badlogic.gdx.math.Interpolation;
@@ -189,7 +188,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		MsdfFont font = style.font;
 
 		if (bg != null) {
-			prefHeight = Math.max(bg.getTopHeight() + bg.getBottomHeight() + font.getCapHeight() - font.getDescent() * 2,
+			prefHeight = Math.max(bg.getPaddingOutTop() + bg.getPaddingOutBottom() + font.getCapHeight() - font.getDescent() * 2,
 				bg.getMinHeight());
 		} else
 			prefHeight = font.getCapHeight() - font.getDescent() * 2;
@@ -198,7 +197,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 		GlyphLayout layout = layoutPool.obtain();
 		if (selectedPrefWidth) {
 			prefWidth = 0;
-			if (bg != null) prefWidth = bg.getLeftWidth() + bg.getRightWidth();
+			if (bg != null) prefWidth = bg.getPaddingOutLeft() + bg.getPaddingOutRight();
 			T selected = getSelected();
 			if (selected != null) {
 				layout.setText(font, toString(selected));
@@ -212,13 +211,13 @@ public class SelectBox<T> extends Widget implements Disableable {
 			}
 
 			prefWidth = maxItemWidth;
-			if (bg != null) prefWidth = Math.max(prefWidth + bg.getLeftWidth() + bg.getRightWidth(), bg.getMinWidth());
+			if (bg != null) prefWidth = Math.max(prefWidth + bg.getPaddingOutLeft() + bg.getPaddingOutRight(), bg.getMinWidth());
 
 			ListStyle listStyle = style.listStyle;
 			ScrollPaneStyle scrollStyle = style.scrollStyle;
-			float scrollWidth = maxItemWidth + listStyle.selection.getLeftWidth() + listStyle.selection.getRightWidth();
+			float scrollWidth = maxItemWidth + listStyle.selection.getPaddingOutLeft() + listStyle.selection.getPaddingOutRight();
 			bg = scrollStyle.background;
-			if (bg != null) scrollWidth = Math.max(scrollWidth + bg.getLeftWidth() + bg.getRightWidth(), bg.getMinWidth());
+			if (bg != null) scrollWidth = Math.max(scrollWidth + bg.getPaddingOutLeft() + bg.getPaddingOutRight(), bg.getMinWidth());
 			if (scrollPane == null || !scrollPane.disableY) {
 				scrollWidth += Math.max(style.scrollStyle.vScroll != null ? style.scrollStyle.vScroll.getMinWidth() : 0,
 					style.scrollStyle.vScrollKnob != null ? style.scrollStyle.vScrollKnob.getMinWidth() : 0);
@@ -260,10 +259,10 @@ public class SelectBox<T> extends Widget implements Disableable {
 		T selected = selection.first();
 		if (selected != null) {
 			if (background != null) {
-				width -= background.getLeftWidth() + background.getRightWidth();
-				height -= background.getBottomHeight() + background.getTopHeight();
-				x += background.getLeftWidth();
-				y += (int)(height / 2 + background.getBottomHeight() + font.getData().capHeight / 2);
+				width -= background.getPaddingOutLeft() + background.getPaddingOutRight();
+				height -= background.getPaddingOutBottom() + background.getPaddingOutTop();
+				x += background.getPaddingOutLeft();
+				y += (int)(height / 2 + background.getPaddingOutBottom() + font.getData().capHeight / 2);
 			} else {
 				y += (int)(height / 2 + font.getData().capHeight / 2);
 			}
@@ -336,7 +335,7 @@ public class SelectBox<T> extends Widget implements Disableable {
 			width = Math.max(layout.width, width);
 		}
 		Drawable bg = style.background;
-		if (bg != null) width = Math.max(width + bg.getLeftWidth() + bg.getRightWidth(), bg.getMinWidth());
+		if (bg != null) width = Math.max(width + bg.getPaddingOutLeft() + bg.getPaddingOutRight(), bg.getMinWidth());
 		return width;
 	}
 
@@ -514,9 +513,9 @@ public class SelectBox<T> extends Widget implements Disableable {
 			float itemHeight = list.getItemHeight();
 			float height = itemHeight * (maxListCount <= 0 ? selectBox.items.size : Math.min(maxListCount, selectBox.items.size));
 			Drawable scrollPaneBackground = getStyle().background;
-			if (scrollPaneBackground != null) height += scrollPaneBackground.getTopHeight() + scrollPaneBackground.getBottomHeight();
+			if (scrollPaneBackground != null) height += scrollPaneBackground.getPaddingOutTop() + scrollPaneBackground.getPaddingOutBottom();
 			Drawable listBackground = list.getStyle().background;
-			if (listBackground != null) height += listBackground.getTopHeight() + listBackground.getBottomHeight();
+			if (listBackground != null) height += listBackground.getPaddingOutTop() + listBackground.getPaddingOutBottom();
 
 			float heightBelow = stagePosition.y;
 			float heightAbove = stage.getHeight() - heightBelow - selectBox.getHeight();

@@ -24,7 +24,8 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
  * @author Nathan Sweet */
 public class BaseDrawable implements Drawable {
 	private @Null String name;
-	private float leftWidth, rightWidth, topHeight, bottomHeight, minWidth, minHeight;
+	private float paddingOutLeft, paddingOutRight, paddingOutTop, paddingOutBottom, minWidth, minHeight;
+	private float paddingInLeft, paddingInTop, paddingInRight, paddingInBottom;
 
 	public BaseDrawable () {
 	}
@@ -32,10 +33,14 @@ public class BaseDrawable implements Drawable {
 	/** Creates a new empty drawable with the same sizing information as the specified drawable. */
 	public BaseDrawable (Drawable drawable) {
 		if (drawable instanceof BaseDrawable) name = ((BaseDrawable)drawable).getName();
-		leftWidth = drawable.getLeftWidth();
-		rightWidth = drawable.getRightWidth();
-		topHeight = drawable.getTopHeight();
-		bottomHeight = drawable.getBottomHeight();
+		paddingOutLeft = drawable.getPaddingOutLeft();
+		paddingOutTop = drawable.getPaddingOutTop();
+		paddingOutRight = drawable.getPaddingOutRight();
+		paddingOutBottom = drawable.getPaddingOutBottom();
+		paddingInLeft = drawable.getPaddingInLeft();
+		paddingInTop = drawable.getPaddingInTop();
+		paddingInRight = drawable.getPaddingInRight();
+		paddingInBottom = drawable.getPaddingInBottom();
 		minWidth = drawable.getMinWidth();
 		minHeight = drawable.getMinHeight();
 	}
@@ -43,43 +48,96 @@ public class BaseDrawable implements Drawable {
 	public void draw (Batch batch, float x, float y, float width, float height) {
 	}
 
-	public float getLeftWidth () {
-		return leftWidth;
+	public float getPaddingOutLeft() {
+		return paddingOutLeft;
 	}
 
-	public void setLeftWidth (float leftWidth) {
-		this.leftWidth = leftWidth;
+	public void setPaddingOutLeft(float paddingOutLeft) {
+		this.paddingOutLeft = paddingOutLeft;
 	}
 
-	public float getRightWidth () {
-		return rightWidth;
+	public float getPaddingOutTop() {
+		return paddingOutTop;
 	}
 
-	public void setRightWidth (float rightWidth) {
-		this.rightWidth = rightWidth;
+	public void setPaddingOutTop(float paddingOutTop) {
+		this.paddingOutTop = paddingOutTop;
 	}
 
-	public float getTopHeight () {
-		return topHeight;
+	public float getPaddingOutRight() {
+		return paddingOutRight;
 	}
 
-	public void setTopHeight (float topHeight) {
-		this.topHeight = topHeight;
+	public void setPaddingOutRight(float paddingOutRight) {
+		this.paddingOutRight = paddingOutRight;
 	}
 
-	public float getBottomHeight () {
-		return bottomHeight;
+	public float getPaddingOutBottom() {
+		return paddingOutBottom;
 	}
 
-	public void setBottomHeight (float bottomHeight) {
-		this.bottomHeight = bottomHeight;
+	public void setPaddingOutBottom(float paddingOutBottom) {
+		this.paddingOutBottom = paddingOutBottom;
 	}
 
-	public void setPadding (float topHeight, float leftWidth, float bottomHeight, float rightWidth) {
-		setTopHeight(topHeight);
-		setLeftWidth(leftWidth);
-		setBottomHeight(bottomHeight);
-		setRightWidth(rightWidth);
+	public void setOutPaddings(float left, float top, float right, float bottom) {
+		setPaddingOutLeft(left);
+		setPaddingOutTop(top);
+		setPaddingOutRight(right);
+		setPaddingOutBottom(bottom);
+	}
+
+	public void setOutPaddings(float padding) {
+		setPaddingOutLeft(padding);
+		setPaddingOutTop(padding);
+		setPaddingOutRight(padding);
+		setPaddingOutBottom(padding);
+	}
+
+	public float getPaddingInLeft() {
+		return paddingInLeft;
+	}
+
+	public void setPaddingInLeft(float paddingInLeft) {
+		this.paddingInLeft = paddingInLeft;
+	}
+
+	public float getPaddingInTop() {
+		return paddingInTop;
+	}
+
+	public void setPaddingInTop(float paddingInTop) {
+		this.paddingInTop = paddingInTop;
+	}
+
+	public float getPaddingInRight() {
+		return paddingInRight;
+	}
+
+	public void setPaddingInRight(float paddingInRight) {
+		this.paddingInRight = paddingInRight;
+	}
+
+	public float getPaddingInBottom() {
+		return paddingInBottom;
+	}
+
+	public void setPaddingInBottom(float paddingInBottom) {
+		this.paddingInBottom = paddingInBottom;
+	}
+
+	public void setInPaddings(float left, float top, float right, float bottom) {
+		setPaddingInLeft(left);
+		setPaddingInTop(top);
+		setPaddingInRight(right);
+		setPaddingInBottom(bottom);
+	}
+
+	public void setInPaddings(float padding) {
+		setPaddingInLeft(padding);
+		setPaddingInTop(padding);
+		setPaddingInRight(padding);
+		setPaddingInBottom(padding);
 	}
 
 	public float getMinWidth () {

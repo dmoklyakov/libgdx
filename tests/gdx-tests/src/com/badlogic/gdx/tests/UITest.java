@@ -106,8 +106,8 @@ public class UITest extends GdxTest {
 		final SelectBox selectBox = new SelectBox(skin);
 		selectBox.setAlignment(Align.right);
 		selectBox.getList().setAlignment(Align.right);
-		selectBox.getStyle().listStyle.selection.setRightWidth(10);
-		selectBox.getStyle().listStyle.selection.setLeftWidth(20);
+		selectBox.getStyle().listStyle.selection.setPaddingOutRight(10);
+		selectBox.getStyle().listStyle.selection.setPaddingOutLeft(20);
 		selectBox.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println(selectBox.getSelected());

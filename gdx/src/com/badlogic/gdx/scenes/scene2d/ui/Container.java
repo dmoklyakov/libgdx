@@ -79,8 +79,8 @@ public class Container<T extends Actor> extends WidgetGroup {
 	}
 
 	/** Sets the background drawable and, if adjustPadding is true, sets the container's padding to
-	 * {@link Drawable#getBottomHeight()} , {@link Drawable#getTopHeight()}, {@link Drawable#getLeftWidth()}, and
-	 * {@link Drawable#getRightWidth()}.
+	 * {@link Drawable#getPaddingOutBottom()} , {@link Drawable#getPaddingOutTop()}, {@link Drawable#getPaddingOutLeft()}, and
+	 * {@link Drawable#getPaddingOutRight()}.
 	 * @param background If null, the background will be cleared and padding removed. */
 	public void setBackground (@Null Drawable background, boolean adjustPadding) {
 		if (this.background == background) return;
@@ -89,7 +89,7 @@ public class Container<T extends Actor> extends WidgetGroup {
 			if (background == null)
 				pad(Value.zero);
 			else
-				pad(background.getTopHeight(), background.getLeftWidth(), background.getBottomHeight(), background.getRightWidth());
+				pad(background.getPaddingOutTop(), background.getPaddingOutLeft(), background.getPaddingOutBottom(), background.getPaddingOutRight());
 			invalidate();
 		}
 	}

@@ -192,8 +192,8 @@ public class Label extends Widget {
 		if (wrap && ellipsis == null) {
 			float width = getWidth();
 			if (style.background != null) {
-				width = Math.max(width, style.background.getMinWidth()) - style.background.getLeftWidth()
-					- style.background.getRightWidth();
+				width = Math.max(width, style.background.getMinWidth()) - style.background.getPaddingOutLeft()
+					- style.background.getPaddingOutRight();
 			}
 			layout.setText(cache.getFont(), text, Color.WHITE, width, Align.left, true);
 		} else
@@ -221,10 +221,10 @@ public class Label extends Widget {
 		Drawable background = style.background;
 		float x = 0, y = 0;
 		if (background != null) {
-			x = background.getLeftWidth();
-			y = background.getBottomHeight();
-			width -= background.getLeftWidth() + background.getRightWidth();
-			height -= background.getBottomHeight() + background.getTopHeight();
+			x = background.getPaddingOutLeft();
+			y = background.getPaddingOutBottom();
+			width -= background.getPaddingOutLeft() + background.getPaddingOutRight();
+			height -= background.getPaddingOutBottom() + background.getPaddingOutTop();
 		}
 
 		GlyphLayout layout = this.layout;
@@ -286,7 +286,7 @@ public class Label extends Widget {
 		float width = prefWidth;
 		Drawable background = style.background;
 		if (background != null)
-			width = Math.max(width + background.getLeftWidth() + background.getRightWidth(), background.getMinWidth());
+			width = Math.max(width + background.getPaddingOutLeft() + background.getPaddingOutRight(), background.getMinWidth());
 		return width;
 	}
 
@@ -297,7 +297,7 @@ public class Label extends Widget {
 		float height = prefHeight - style.font.getDescent() * descentScaleCorrection * 2;
 		Drawable background = style.background;
 		if (background != null)
-			height = Math.max(height + background.getTopHeight() + background.getBottomHeight(), background.getMinHeight());
+			height = Math.max(height + background.getPaddingOutTop() + background.getPaddingOutBottom(), background.getMinHeight());
 		return height;
 	}
 

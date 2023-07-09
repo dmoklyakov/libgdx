@@ -52,7 +52,11 @@ public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 
 		sprite.setRotation(0);
 		sprite.setScale(1, 1);
-		sprite.setBounds(x, y, width, height);
+		sprite.setBounds(x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom()
+		);
 		sprite.draw(batch);
 
 		sprite.setPackedColor(oldColor);
@@ -72,10 +76,14 @@ public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 		float oldColor = spriteColor.toFloatBits();
 		sprite.setColor(spriteColor.mul(batch.getColor()));
 
-		sprite.setOrigin(originX, originY);
+		sprite.setOrigin(originX - getPaddingInLeft(), originY - getPaddingInTop());
 		sprite.setRotation(rotation);
 		sprite.setScale(scaleX, scaleY);
-		sprite.setBounds(x, y, width, height);
+		sprite.setBounds(x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom()
+		);
 		sprite.draw(batch);
 
 		sprite.setPackedColor(oldColor);
@@ -101,10 +109,14 @@ public class SpriteDrawable extends BaseDrawable implements TransformDrawable {
 		newSprite.setColor(tint);
 		newSprite.setSize(getMinWidth(), getMinHeight());
 		SpriteDrawable drawable = new SpriteDrawable(newSprite);
-		drawable.setLeftWidth(getLeftWidth());
-		drawable.setRightWidth(getRightWidth());
-		drawable.setTopHeight(getTopHeight());
-		drawable.setBottomHeight(getBottomHeight());
+		drawable.setPaddingOutLeft(getPaddingOutLeft());
+		drawable.setPaddingOutTop(getPaddingOutTop());
+		drawable.setPaddingOutRight(getPaddingOutRight());
+		drawable.setPaddingOutBottom(getPaddingOutBottom());
+		drawable.setPaddingInLeft(getPaddingInLeft());
+		drawable.setPaddingInTop(getPaddingInTop());
+		drawable.setPaddingInRight(getPaddingInRight());
+		drawable.setPaddingInBottom(getPaddingInBottom());
 		return drawable;
 	}
 

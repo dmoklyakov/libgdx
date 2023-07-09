@@ -156,18 +156,18 @@ public class Slider extends ProgressBar {
 		float max = getMaxValue();
 
 		if (vertical) {
-			float height = getHeight() - bg.getTopHeight() - bg.getBottomHeight();
+			float height = getHeight() - bg.getPaddingOutTop() - bg.getPaddingOutBottom();
 			float knobHeight = knob == null ? 0 : knob.getMinHeight();
-			position = y - bg.getBottomHeight() - knobHeight * 0.5f;
+			position = y - bg.getPaddingOutBottom() - knobHeight * 0.5f;
 			value = min + (max - min) * visualInterpolationInverse.apply(position / (height - knobHeight));
-			position = Math.max(Math.min(0, bg.getBottomHeight()), position);
+			position = Math.max(Math.min(0, bg.getPaddingOutBottom()), position);
 			position = Math.min(height - knobHeight, position);
 		} else {
-			float width = getWidth() - bg.getLeftWidth() - bg.getRightWidth();
+			float width = getWidth() - bg.getPaddingOutLeft() - bg.getPaddingOutRight();
 			float knobWidth = knob == null ? 0 : knob.getMinWidth();
-			position = x - bg.getLeftWidth() - knobWidth * 0.5f;
+			position = x - bg.getPaddingOutLeft() - knobWidth * 0.5f;
 			value = min + (max - min) * visualInterpolationInverse.apply(position / (width - knobWidth));
-			position = Math.max(Math.min(0, bg.getLeftWidth()), position);
+			position = Math.max(Math.min(0, bg.getPaddingOutLeft()), position);
 			position = Math.min(width - knobWidth, position);
 		}
 

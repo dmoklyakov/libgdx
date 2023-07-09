@@ -120,7 +120,7 @@ public class TextArea extends TextField {
 			// due to how linesShowing is calculated in #sizeChanged and #getHeight() returning rounded value
 			float prefHeight = MathUtils.ceil(style.font.getLineHeight() * prefRows);
 			if (style.background != null) {
-				prefHeight = Math.max(prefHeight + style.background.getBottomHeight() + style.background.getTopHeight(),
+				prefHeight = Math.max(prefHeight + style.background.getPaddingOutBottom() + style.background.getPaddingOutTop(),
 					style.background.getMinHeight());
 			}
 			return prefHeight;
@@ -214,14 +214,14 @@ public class TextArea extends TextField {
 		// The number of lines showed must be updated whenever the height is updated
 		MsdfFont font = style.font;
 		Drawable background = style.background;
-		float availableHeight = getHeight() - (background == null ? 0 : background.getBottomHeight() + background.getTopHeight());
+		float availableHeight = getHeight() - (background == null ? 0 : background.getPaddingOutBottom() + background.getPaddingOutTop());
 		linesShowing = (int)Math.floor(availableHeight / font.getLineHeight());
 	}
 
 	protected float getTextY (BitmapFont font, @Null Drawable background) {
 		float textY = getHeight();
 		if (background != null) {
-			textY = textY - background.getTopHeight();
+			textY = textY - background.getPaddingOutTop();
 		}
 		if (font.usesIntegerPositions()) textY = (int)textY;
 		return textY;
@@ -288,7 +288,7 @@ public class TextArea extends TextField {
 			this.lastText = text;
 			MsdfFont font = style.font;
 			float maxWidthLine = this.getWidth()
-				- (style.background != null ? style.background.getLeftWidth() + style.background.getRightWidth() : 0);
+				- (style.background != null ? style.background.getPaddingOutLeft() + style.background.getPaddingOutRight() : 0);
 			linesBreak.clear();
 			int lineStart = 0;
 			int lastSpace = 0;
@@ -401,12 +401,12 @@ public class TextArea extends TextField {
 			float height = getHeight();
 
 			if (background != null) {
-				height -= background.getTopHeight();
-				x -= background.getLeftWidth();
+				height -= background.getPaddingOutTop();
+				x -= background.getPaddingOutLeft();
 			}
 			x = Math.max(0, x);
 			if (background != null) {
-				y -= background.getTopHeight();
+				y -= background.getPaddingOutTop();
 			}
 
 			cursorLine = (int)Math.floor((height - y) / font.getLineHeight()) + firstLineShowing;

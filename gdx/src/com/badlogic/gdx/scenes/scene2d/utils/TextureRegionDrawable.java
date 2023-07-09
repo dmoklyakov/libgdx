@@ -61,13 +61,28 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 
 	public void draw (Batch batch, float x, float y, float width, float height) {
 		updateUiParams(batch);
-		batch.draw(region, x, y, width, height);
+		batch.draw(region,
+				x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom()
+		);
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
 		float scaleY, float rotation) {
 		updateUiParams(batch);
-		batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
+		batch.draw(region,
+				x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				originX - getPaddingInLeft(),
+				originY - getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom(),
+				scaleX,
+				scaleY,
+				rotation
+		);
 	}
 
 	public void setRegion (TextureRegion region) {
@@ -92,10 +107,14 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 		sprite.setColor(tint);
 		sprite.setSize(getMinWidth(), getMinHeight());
 		SpriteDrawable drawable = new SpriteDrawable(sprite);
-		drawable.setLeftWidth(getLeftWidth());
-		drawable.setRightWidth(getRightWidth());
-		drawable.setTopHeight(getTopHeight());
-		drawable.setBottomHeight(getBottomHeight());
+		drawable.setPaddingOutLeft(getPaddingOutLeft());
+		drawable.setPaddingOutTop(getPaddingOutTop());
+		drawable.setPaddingOutRight(getPaddingOutRight());
+		drawable.setPaddingOutBottom(getPaddingOutBottom());
+		drawable.setPaddingInLeft(getPaddingInLeft());
+		drawable.setPaddingInTop(getPaddingInTop());
+		drawable.setPaddingInRight(getPaddingInRight());
+		drawable.setPaddingInBottom(getPaddingInBottom());
 		return drawable;
 	}
 

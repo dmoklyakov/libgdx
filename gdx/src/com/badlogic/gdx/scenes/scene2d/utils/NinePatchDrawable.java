@@ -22,7 +22,7 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 
 /** Drawable for a {@link NinePatch}.
  * <p>
- * The drawable sizes are set when the ninepatch is set, but they are separate values. Eg, {@link Drawable#getLeftWidth()} could
+ * The drawable sizes are set when the ninepatch is set, but they are separate values. Eg, {@link Drawable#getPaddingInLeft()} could
  * be set to more than {@link NinePatch#getLeftWidth()} in order to provide more space on the left than actually exists in the
  * ninepatch.
  * <p>
@@ -46,12 +46,27 @@ public class NinePatchDrawable extends BaseDrawable implements TransformDrawable
 	}
 
 	public void draw (Batch batch, float x, float y, float width, float height) {
-		patch.draw(batch, x, y, width, height);
+		patch.draw(batch,
+				x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom()
+		);
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
 		float scaleY, float rotation) {
-		patch.draw(batch, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
+		patch.draw(batch,
+				x + getPaddingInLeft(),
+				y + getPaddingInTop(),
+				originX - getPaddingInLeft(),
+				originY - getPaddingInTop(),
+				width - getPaddingInLeft() - getPaddingInRight(),
+				height - getPaddingInTop() - getPaddingInBottom(),
+				scaleX,
+				scaleY,
+				rotation
+		);
 	}
 
 	/** Sets this drawable's ninepatch and set the min width, min height, top height, right width, bottom height, and left width to
@@ -61,10 +76,10 @@ public class NinePatchDrawable extends BaseDrawable implements TransformDrawable
 		if (patch != null) {
 			setMinWidth(patch.getTotalWidth());
 			setMinHeight(patch.getTotalHeight());
-			setTopHeight(patch.getPadTop());
-			setRightWidth(patch.getPadRight());
-			setBottomHeight(patch.getPadBottom());
-			setLeftWidth(patch.getPadLeft());
+			setPaddingOutLeft(patch.getPadLeft());
+			setPaddingOutTop(patch.getPadTop());
+			setPaddingOutRight(patch.getPadRight());
+			setPaddingOutBottom(patch.getPadBottom());
 		}
 	}
 

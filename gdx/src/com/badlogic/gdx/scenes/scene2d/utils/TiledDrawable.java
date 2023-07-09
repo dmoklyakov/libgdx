@@ -109,10 +109,14 @@ public class TiledDrawable extends TextureRegionDrawable {
 	public TiledDrawable tint (Color tint) {
 		TiledDrawable drawable = new TiledDrawable(this);
 		drawable.color.set(tint);
-		drawable.setLeftWidth(getLeftWidth());
-		drawable.setRightWidth(getRightWidth());
-		drawable.setTopHeight(getTopHeight());
-		drawable.setBottomHeight(getBottomHeight());
+		drawable.setPaddingOutLeft(getPaddingOutLeft());
+		drawable.setPaddingOutTop(getPaddingOutTop());
+		drawable.setPaddingOutRight(getPaddingOutRight());
+		drawable.setPaddingOutBottom(getPaddingOutBottom());
+		drawable.setPaddingInLeft(getPaddingInLeft());
+		drawable.setPaddingInTop(getPaddingInTop());
+		drawable.setPaddingInRight(getPaddingInRight());
+		drawable.setPaddingInBottom(getPaddingInBottom());
 		return drawable;
 	}
 }

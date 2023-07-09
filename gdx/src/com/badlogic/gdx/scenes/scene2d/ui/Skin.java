@@ -397,14 +397,19 @@ public class Skin implements Disposable {
 		return newDrawable;
 	}
 
-	/** Scales the drawable's {@link Drawable#getLeftWidth()}, {@link Drawable#getRightWidth()},
-	 * {@link Drawable#getBottomHeight()}, {@link Drawable#getTopHeight()}, {@link Drawable#getMinWidth()}, and
-	 * {@link Drawable#getMinHeight()}. */
+	/** Scales the drawable's {@link Drawable#getPaddingOutLeft()}, {@link Drawable#getPaddingOutTop()},
+	 * {@link Drawable#getPaddingOutRight()}, {@link Drawable#getPaddingOutBottom()}, {@link Drawable#getPaddingInLeft()},
+	 * {@link Drawable#getPaddingInTop()}, {@link Drawable#getPaddingInRight()}, {@link Drawable#getPaddingInBottom()},
+	 * {@link Drawable#getMinWidth()}, and {@link Drawable#getMinHeight()}. */
 	public void scale (Drawable drawble) {
-		drawble.setLeftWidth(drawble.getLeftWidth() * scale);
-		drawble.setRightWidth(drawble.getRightWidth() * scale);
-		drawble.setBottomHeight(drawble.getBottomHeight() * scale);
-		drawble.setTopHeight(drawble.getTopHeight() * scale);
+		drawble.setPaddingOutLeft(drawble.getPaddingOutLeft() * scale);
+		drawble.setPaddingOutTop(drawble.getPaddingOutTop() * scale);
+		drawble.setPaddingOutRight(drawble.getPaddingOutRight() * scale);
+		drawble.setPaddingOutBottom(drawble.getPaddingOutBottom() * scale);
+		drawble.setPaddingInLeft(drawble.getPaddingInLeft() * scale);
+		drawble.setPaddingInTop(drawble.getPaddingInTop() * scale);
+		drawble.setPaddingInRight(drawble.getPaddingInRight() * scale);
+		drawble.setPaddingInBottom(drawble.getPaddingInBottom() * scale);
 		drawble.setMinWidth(drawble.getMinWidth() * scale);
 		drawble.setMinHeight(drawble.getMinHeight() * scale);
 	}

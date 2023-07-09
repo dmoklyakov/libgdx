@@ -1314,7 +1314,7 @@ public class Table extends WidgetGroup {
 	static public Value backgroundTop = new Value() {
 		public float get (@Null Actor context) {
 			Drawable background = ((Table)context).background;
-			return background == null ? 0 : background.getTopHeight();
+			return background == null ? 0 : background.getPaddingOutTop();
 		}
 	};
 
@@ -1323,7 +1323,7 @@ public class Table extends WidgetGroup {
 	static public Value backgroundLeft = new Value() {
 		public float get (@Null Actor context) {
 			Drawable background = ((Table)context).background;
-			return background == null ? 0 : background.getLeftWidth();
+			return background == null ? 0 : background.getPaddingOutLeft();
 		}
 	};
 
@@ -1332,7 +1332,7 @@ public class Table extends WidgetGroup {
 	static public Value backgroundBottom = new Value() {
 		public float get (@Null Actor context) {
 			Drawable background = ((Table)context).background;
-			return background == null ? 0 : background.getBottomHeight();
+			return background == null ? 0 : background.getPaddingOutBottom();
 		}
 	};
 
@@ -1341,7 +1341,7 @@ public class Table extends WidgetGroup {
 	static public Value backgroundRight = new Value() {
 		public float get (@Null Actor context) {
 			Drawable background = ((Table)context).background;
-			return background == null ? 0 : background.getRightWidth();
+			return background == null ? 0 : background.getPaddingOutRight();
 		}
 	};
 }
