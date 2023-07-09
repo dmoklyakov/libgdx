@@ -136,6 +136,17 @@ public class Color {
 		return clamp();
 	}
 
+	/** Multiplies r, g, b components of this Color with the given value.
+	 *
+	 * @param value the value
+	 * @return this color */
+	public Color mulRGB (float value) {
+		this.r *= value;
+		this.g *= value;
+		this.b *= value;
+		return clamp();
+	}
+
 	/** Adds the given color to this color.
 	 * 
 	 * @param color the color
