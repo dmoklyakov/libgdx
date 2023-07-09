@@ -35,7 +35,6 @@ uniform mat4 u_invTransform;
 
 // Begin MSDF stuff.
 struct MsdfParams {
-    vec4 color;
     vec4 shadowColor;
     vec4 innerShadowColor;
     vec4 data1; // shadowOffset (x, y), distanceFactor, fontWeight
@@ -105,7 +104,7 @@ void main()
         vec4 msdf = texture2D(TEXTURE, v_texCoords);
         float distance = params.data1.z * (median(msdf.r, msdf.g, msdf.b) + params.data1.w - 0.5);
         float glyphAlpha = clamp(distance + 0.5, 0.0, 1.0);
-        vec4 glyph = vec4(params.color.rgb, glyphAlpha * params.color.a);
+        vec4 glyph = vec4(1.0, 1.0, 1.0, glyphAlpha);
 
         // Shadow
         distance = texture2D(TEXTURE, v_texCoords - params.data1.xy / TEXTURE_SIZE).a + params.data1.w;
@@ -118,7 +117,7 @@ void main()
         float innerShadowAlpha = linearstep(0.5 + params.data2.z, 0.5, distance) * params.innerShadowColor.a * glyphAlpha;
         vec4 innerShadow = vec4(params.innerShadowColor.rgb, innerShadowAlpha);
 
-        outColor = blend(blend(innerShadow, glyph, 1.0), shadow, v_color.a);
+        outColor = v_color * blend(blend(innerShadow, glyph, 1.0), shadow, v_color.a);
     } else if (uiParamsIndex >= 0) {
         UiParams params = u_uiParams[uiParamsIndex];
 
@@ -140,11 +139,11 @@ void main()
         float actualBorderAlpha = inBorder * outBorder;
 
         params.borderColor.a = min(params.borderColor.a, actualBorderAlpha);
-        textureColor.a = min(1.0 - borderDistance, textureColor.a);
-        textureColor = clamp(textureColor, 0.0, 1.0);
+        textureColor.a = min(max(0.0, 1.0 - borderDistance), textureColor.a);
+        textureColor = v_color * textureColor;
         outColor = blendBorder(textureColor, params.borderColor);
     } else {
-        outColor = texture2D(TEXTURE, v_texCoords);
+        outColor = v_color * texture2D(TEXTURE, v_texCoords);
     }
-    out_FragColor = v_color * clamp(outColor, 0.0, 1.0);
+    out_FragColor = clamp(outColor, 0.0, 1.0);
 }

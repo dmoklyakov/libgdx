@@ -71,7 +71,7 @@ public class SpriteBatch implements Batch {
      */
     protected static int maxTextureUnits = -1;
     private static int maxVertexUniformVectors = -1;
-    int msdfParamsComponents = 4 * 5;
+    int msdfParamsComponents = 4 * 4;
     private static int maxMsdfParams = -1;
     int uiParamsComponents = 4 * 5;
     private static int maxUiParams = -1;
@@ -1254,13 +1254,6 @@ public class SpriteBatch implements Batch {
 
     private void bindLabelStyle(int index, ShaderProgram shader) { // TODO: Use uniform array.
         Label.LabelStyle style = labelStylesArray[index];
-        Gdx.gl.glUniform4f(
-                shader.fetchUniformLocation("u_msdfParams[" + index + "].color", true),
-                style.getFontColor().r,
-                style.getFontColor().g,
-                style.getFontColor().b,
-                style.getFontColor().a
-        );
         Gdx.gl.glUniform4f(
                 shader.fetchUniformLocation("u_msdfParams[" + index + "].shadowColor", true),
                 style.getShadowColor().r,
