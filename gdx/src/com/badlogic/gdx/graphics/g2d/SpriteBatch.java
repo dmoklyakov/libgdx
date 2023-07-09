@@ -1667,18 +1667,12 @@ public class SpriteBatch implements Batch {
 
     protected void setupMatrices() {
         combinedMatrix.set(projectionMatrix).mul(transformMatrix);
-        if (customShader != null) {
-            customShader.setUniformMatrix("u_projTrans", combinedMatrix);
-            customShader.setUniformMatrix("u_invTransform", invTransformMatrix);
-            if (maxTextureUnits > 1) {
-                Gdx.gl20.glUniform1iv(customShader.fetchUniformLocation("u_textures", true), maxTextureUnits, textureUnitIndicesBuffer);
-            }
-        } else {
-            shader.setUniformMatrix("u_projTrans", combinedMatrix);
-            shader.setUniformMatrix("u_invTransform", invTransformMatrix);
-            if (maxTextureUnits > 1) {
-                Gdx.gl20.glUniform1iv(shader.fetchUniformLocation("u_textures", true), maxTextureUnits, textureUnitIndicesBuffer);
-            }
+        ShaderProgram shader = customShader == null ? this.shader : customShader;
+
+        shader.setUniformMatrix("u_projTrans", combinedMatrix);
+        shader.setUniformMatrix("u_invTransform", invTransformMatrix);
+        if (maxTextureUnits > 1) {
+            Gdx.gl20.glUniform1iv(shader.fetchUniformLocation("u_textures", true), maxTextureUnits, textureUnitIndicesBuffer);
         }
     }
 

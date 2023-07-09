@@ -63,11 +63,10 @@ const vec4 ZERO_VECTOR = vec4(0.0, 0.0, 0.0, 0.0);
 // Begin UI stuff.
 
 float roundedBoxSDF(vec2 position, vec2 size, vec2 origin, vec4 radius) {
-    vec4 transformedPosition = u_invTransform * vec4(position, 0.0, 1.0);
-    vec2 transformedPos2D = transformedPosition.xy - origin;
-    radius.xy = (transformedPos2D.x > 0.0) ? radius.xy : radius.zw;
-    radius.x = (transformedPos2D.y > 0.0) ? radius.x : radius.y;
-    vec2 q = abs(transformedPos2D) - size + radius.x;
+    vec2 transformedPos = (u_invTransform * vec4(position, 0.0, 1.0)).xy - origin;
+    radius.xy = (transformedPos.x > 0.0) ? radius.xy : radius.zw;
+    radius.x = (transformedPos.y > 0.0) ? radius.x : radius.y;
+    vec2 q = abs(transformedPos) - size + radius.x;
     return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius.x;
 }
 
