@@ -140,8 +140,9 @@ void main()
 
         params.borderColor.a = min(params.borderColor.a, actualBorderAlpha);
         textureColor.a = min(max(0.0, 1.0 - borderDistance), textureColor.a);
-        textureColor = v_color * textureColor;
+        textureColor.rgb = v_color.rgb * textureColor.rgb;
         outColor = blendBorder(textureColor, params.borderColor);
+        outColor.a *= v_color.a;
     } else {
         outColor = v_color * texture2D(TEXTURE, v_texCoords);
     }
