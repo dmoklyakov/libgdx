@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class UiParams {
     private final Vector4 cornerRadii = new Vector4(0f, 0f, 0f, 0f); // px: [topLeft, topRight, bottomRight, bottomLeft].
-    private final Color borderColor = new Color(Color.WHITE);
+    private final Color borderColor = new Color(Color.CLEAR);
     private float contentScale = 1f;
     private float borderOutSoftness = 0f; // px.
     private float borderThickness = 0f; // px.
@@ -18,7 +18,7 @@ public class UiParams {
     private final Vector4 tmpVector = new Vector4();
 
     public boolean isDefault() {
-        return cornerRadii.x == 0f && cornerRadii.y == 0f && cornerRadii.z == 0f && cornerRadii.w == 0f &&
+        return cornerRadii.isZero() &&
                 (borderColor.a == 0f || borderThickness == 0f) &&
                 (contentScale == 1f || autoScaleContent) &&
                 borderOutSoftness == 0f &&
