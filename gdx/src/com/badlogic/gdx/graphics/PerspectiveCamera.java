@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.graphics;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
@@ -25,6 +26,7 @@ import com.badlogic.gdx.math.Vector3;
 public class PerspectiveCamera extends Camera {
 	/** the field of view of the height, in degrees **/
 	public float fieldOfView = 67;
+	public boolean horizontalFov = false;
 
 	public PerspectiveCamera () {
 	}
@@ -53,7 +55,14 @@ public class PerspectiveCamera extends Camera {
 	@Override
 	public void update (boolean updateFrustum) {
 		float aspect = viewportWidth / viewportHeight;
-		projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
+		float fov = fieldOfView;
+
+		if (horizontalFov) {
+			// Convert the horizontal FOV to a vertical FOV.
+			fov = 2f * MathUtils.atanDeg(MathUtils.tanDeg(fov / 2f) / aspect);
+		}
+
+		projection.setToProjection(Math.abs(near), Math.abs(far), fov, aspect);
 		view.setToLookAt(position, tmp.set(position).add(direction), up);
 		combined.set(projection);
 		Matrix4.mul(combined.val, view.val);
