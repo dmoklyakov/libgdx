@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.scenes.scene2d.ui;
 
+import static com.badlogic.gdx.graphics.g2d.msdf.MsdfFont.WEIGHT_REGULAR;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -25,7 +27,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout.GlyphRun;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.msdf.MsdfFont;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfTextParams;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -46,6 +50,8 @@ import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+
+import org.jetbrains.annotations.NotNull;
 
 /** A single-line text input field.
  * <p>
@@ -86,6 +92,8 @@ public class TextField extends Widget implements Disableable {
 	protected final FloatArray glyphPositions = new FloatArray();
 
 	TextFieldStyle style;
+	
+	private MsdfTextParams msdfTextParams;
 	private String messageText;
 	protected CharSequence displayText;
 	Clipboard clipboard;
@@ -381,10 +389,16 @@ public class TextField extends Widget implements Disableable {
 	}
 
 	protected void drawText (Batch batch, MsdfFont font, float x, float y) {
+		if (batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setStyle(style, false);
+		}
 		font.draw(batch, displayText, x + textOffset, y, visibleTextStart, visibleTextEnd, 0, Align.left, false);
 	}
 
 	protected void drawMessageText (Batch batch, MsdfFont font, float x, float y, float maxWidth) {
+		if (batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setStyle(style, true);
+		}
 		font.draw(batch, messageText, x, y, 0, messageText.length(), maxWidth, textHAlign, false, "...");
 	}
 
@@ -1099,6 +1113,68 @@ public class TextField extends Widget implements Disableable {
 		public @Null MsdfFont messageFont;
 		public @Null Color messageFontColor;
 
+		/**
+		 * The font size in pixels.
+		 */
+		private float size = 32f;
+
+		/**
+		 * The font weight, from -0.5 to 0.5. Higher values result in thicker fonts.
+		 * The resulting effect depends on {@link MsdfFont#getDistanceRange()} and values
+		 * near -0.5 and 0.5 will most always produce rendering artifacts.
+		 * 0 should always look the most like the original font.
+		 */
+		private float weight = WEIGHT_REGULAR;
+
+		/**
+		 * Whether to clip shadow under the glyph. When the glyph is
+		 * drawn in a translucent color, shadow will appear behind it if not clipped.
+		 */
+		private boolean shadowClipped = false;
+
+		/**
+		 * The color of the outer shadow, can be translucent.
+		 * Use transparent for no shadow.
+		 */
+		@NotNull
+		private Color shadowColor = new Color();
+
+		/**
+		 * The drawn shadow offset in pixels, relative to the size of glyph in the font image.
+		 * Offset is in a Y positive down coordinate system.
+		 * Placing the shadow too far from the glyph can create 2 issues:
+		 * <ul>
+		 * <li>Other glyphs of the texture atlas may appear on the sides. Increasing the padding
+		 * value when generating the font can prevent it.</li>
+		 * <li>Some parts of the shadow may be cut by the next glyph drawn.</li>
+		 * </ul>
+		 */
+		@NotNull
+		private Vector2 shadowOffset = new Vector2(2f, 2f);
+
+		/**
+		 * Defines the smoothess of the shadow edges. Value should be between 0 to 0.5.
+		 * A value of 0 looks rough because it doesn't have antialiasing.
+		 */
+		private float shadowSmoothing = 0.1f;
+
+		/**
+		 * The color of the inner shadow, can be translucent.
+		 * Use transparent for no shadow.
+		 */
+		@NotNull
+		private Color innerShadowColor = new Color();
+
+		/**
+		 * The inner shadow range, from 0 to 0.5.
+		 */
+		private float innerShadowRange = 0.3f;
+
+		/**
+		 * The intensity of the shadow.
+		 */
+		private float shadowIntensity = 1f;
+
 		public TextFieldStyle () {
 		}
 
@@ -1125,6 +1201,107 @@ public class TextField extends Widget implements Disableable {
 
 			messageFont = style.messageFont;
 			if (style.messageFontColor != null) messageFontColor = new Color(style.messageFontColor);
+
+			size = style.size;
+			weight = style.weight;
+			shadowClipped = style.shadowClipped;
+			shadowColor = style.shadowColor.cpy();
+			shadowOffset = style.shadowOffset.cpy();
+			shadowSmoothing = style.shadowSmoothing;
+			innerShadowColor = style.innerShadowColor.cpy();
+			innerShadowRange = style.innerShadowRange;
+			shadowIntensity = style.shadowIntensity;
+		}
+
+
+		public float getSize() {
+			return size;
+		}
+
+		public TextFieldStyle setSize(float size) {
+			this.size = size;
+			return this;
+		}
+
+		public float getWeight() {
+			return weight;
+		}
+
+		public TextFieldStyle setWeight(float weight) {
+			this.weight = weight;
+			return this;
+		}
+
+		public boolean isShadowClipped() {
+			return shadowClipped;
+		}
+
+		public TextFieldStyle setShadowClipped(boolean shadowClipped) {
+			this.shadowClipped = shadowClipped;
+			return this;
+		}
+
+		@NotNull
+		public Color getShadowColor() {
+			return shadowColor;
+		}
+
+		public TextFieldStyle setShadowColor(@NotNull Color shadowColor) {
+			//noinspection ConstantConditions
+			if (shadowColor == null) throw new NullPointerException("Shadow color cannot be null.");
+
+			this.shadowColor = shadowColor;
+			return this;
+		}
+
+		@NotNull
+		public Vector2 getShadowOffset() {
+			return shadowOffset;
+		}
+
+		public TextFieldStyle setShadowOffset(@NotNull Vector2 shadowOffset) {
+			//noinspection ConstantConditions
+			if (shadowColor == null) throw new NullPointerException("Shadow offset cannot be null.");
+
+			this.shadowOffset = shadowOffset;
+			return this;
+		}
+
+		public float getShadowSmoothing() {
+			return shadowSmoothing;
+		}
+
+		public TextFieldStyle setShadowSmoothing(float shadowSmoothing) {
+			this.shadowSmoothing = shadowSmoothing;
+			return this;
+		}
+
+		@NotNull
+		public Color getInnerShadowColor() {
+			return innerShadowColor;
+		}
+
+		public TextFieldStyle setInnerShadowColor(@NotNull Color innerShadowColor) {
+			this.innerShadowColor = innerShadowColor;
+			return this;
+		}
+
+		public float getInnerShadowRange() {
+			return innerShadowRange;
+		}
+
+		public TextFieldStyle setInnerShadowRange(float innerShadowRange) {
+			this.innerShadowRange = innerShadowRange;
+			return this;
+		}
+
+		public float getShadowIntensity() {
+			return shadowIntensity;
+		}
+
+		public TextFieldStyle setShadowIntensity(float shadowIntensity) {
+			this.shadowIntensity = shadowIntensity;
+			return this;
 		}
 	}
 }

@@ -27,13 +27,14 @@ import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.msdf.MsdfTextParams;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector4;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.UiParams;
 import com.badlogic.gdx.utils.BufferUtils;
 
@@ -80,11 +81,11 @@ public class SpriteBatch implements Batch {
      * Textures in use (index: Texture Unit, value: Texture)
      */
     private final Texture[] usedTextures;
-    private final Label.LabelStyle[] labelStylesArray;
+    private final MsdfTextParams[] msdfTextParamsArray;
     private final UiParams[] uiParamsArray;
     private final Vector4[] regionsArray; // Used with uiParamsArray only.
     private final Vector4[] positionsArray; // Used with uiParamsArray only.
-    private int labelStylesCount = 0;
+    private int msdfTextParamsCount = 0;
     private int uiParamsCount = 0;
 
     /**
@@ -215,7 +216,10 @@ public class SpriteBatch implements Batch {
             textureUnitIndicesBuffer.put(i);
         }
         textureUnitIndicesBuffer.flip();
-        labelStylesArray = new Label.LabelStyle[maxMsdfParams];
+        msdfTextParamsArray = new MsdfTextParams[maxMsdfParams];
+        for (int i = 0; i < maxMsdfParams; i++) {
+            msdfTextParamsArray[i] = new MsdfTextParams();
+        }
         uiParamsArray = new UiParams[maxUiParams];
         regionsArray = new Vector4[maxUiParams];
         positionsArray = new Vector4[maxUiParams];
@@ -356,7 +360,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -474,7 +478,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x2;
@@ -483,7 +487,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x3;
@@ -492,7 +496,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x4;
@@ -501,7 +505,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -516,7 +520,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         final float upi = activateUiParams(
                 srcX * texture.getWidth(),
                 srcY * texture.getHeight(),
@@ -555,7 +559,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x;
@@ -564,7 +568,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -573,7 +577,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -582,7 +586,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -596,7 +600,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         final float upi = activateUiParams(
                 srcX * texture.getWidth(),
                 srcY * texture.getHeight(),
@@ -623,7 +627,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x;
@@ -632,7 +636,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -641,7 +645,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -650,7 +654,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -664,7 +668,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         final float upi = activateUiParams(
                 u * texture.getWidth(),
                 v * texture.getHeight(),
@@ -687,7 +691,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x;
@@ -696,7 +700,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -705,7 +709,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -714,7 +718,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -733,7 +737,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         final float upi = activateUiParams(texture, x, y, width, height);
 
         final float fx2 = x + width;
@@ -751,7 +755,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x;
@@ -760,7 +764,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -769,7 +773,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -778,7 +782,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -792,7 +796,7 @@ public class SpriteBatch implements Batch {
 
         // Assigns a texture unit to this texture, flushing if none is available
         final float ti = (float) activateTexture(texture);
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         float xMin = Float.MAX_VALUE;
         float yMin = Float.MAX_VALUE;
         float xMax = -Float.MAX_VALUE;
@@ -817,7 +821,7 @@ public class SpriteBatch implements Batch {
 
             // Inject texture unit index and advance idx
             if (maxTextureUnits > 1) {vertices[idx++] = ti;}
-            vertices[idx++] = lsi;
+            vertices[idx++] = mpi;
             vertices[idx++] = upi;
         }
     }
@@ -837,7 +841,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(region.getTexture());
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
         final float upi = activateUiParams(region, x, y, width, height);
 
         final float fx2 = x + width;
@@ -855,7 +859,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x;
@@ -864,7 +868,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -873,7 +877,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = fx2;
@@ -882,7 +886,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -897,7 +901,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(region.getTexture());
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -986,7 +990,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x2;
@@ -995,7 +999,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x3;
@@ -1004,7 +1008,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x4;
@@ -1013,7 +1017,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -1028,7 +1032,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(region.getTexture());
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
 
         // bottom left and top right corner points relative to origin
         final float worldOriginX = x + originX;
@@ -1139,7 +1143,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u1;
         vertices[idx++] = v1;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x2;
@@ -1148,7 +1152,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x3;
@@ -1157,7 +1161,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u3;
         vertices[idx++] = v3;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x4;
@@ -1166,7 +1170,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u4;
         vertices[idx++] = v4;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -1180,7 +1184,7 @@ public class SpriteBatch implements Batch {
         flushIfFull();
 
         final float ti = activateTexture(region.getTexture());
-        final float lsi = activateLabelStyle();
+        final float mpi = activateMsdfTextParams();
 
         // construct corner points
         float x1 = transform.m02;
@@ -1210,7 +1214,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x2;
@@ -1219,7 +1223,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x3;
@@ -1228,7 +1232,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v2;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
 
         vertices[idx++] = x4;
@@ -1237,7 +1241,7 @@ public class SpriteBatch implements Batch {
         vertices[idx++] = u2;
         vertices[idx++] = v;
         if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-        vertices[idx++] = lsi;
+        vertices[idx++] = mpi;
         vertices[idx++] = upi;
     }
 
@@ -1252,8 +1256,8 @@ public class SpriteBatch implements Batch {
         }
     }
 
-    private void bindLabelStyle(int index, ShaderProgram shader) { // TODO: Use uniform array.
-        Label.LabelStyle style = labelStylesArray[index];
+    private void bindMsdfTextParams(int index, ShaderProgram shader) { // TODO: Use uniform array.
+        MsdfTextParams style = msdfTextParamsArray[index];
         Gdx.gl.glUniform4f(
                 shader.fetchUniformLocation("u_msdfParams[" + index + "].shadowColor", true),
                 style.getShadowColor().r,
@@ -1272,7 +1276,7 @@ public class SpriteBatch implements Batch {
                 shader.fetchUniformLocation("u_msdfParams[" + index + "].data1", true),
                 style.getShadowOffset().x,
                 style.getShadowOffset().y,
-                style.font.getDistanceRange() * style.getSize() / style.font.getGlyphSize(),
+                style.getDistanceRange() * style.getSize() / style.getGlyphSize(),
                 style.getWeight()
         );
         Gdx.gl.glUniform4f(
@@ -1351,15 +1355,14 @@ public class SpriteBatch implements Batch {
             usedTextures[i].bind(i);
             bindTextureSize(i, customShader != null ? customShader : shader);
         }
-        for (int i = 0; i < labelStylesCount; i++) {
-            bindLabelStyle(i, customShader != null ? customShader : shader);
+        for (int i = 0; i < msdfTextParamsCount; i++) {
+            bindMsdfTextParams(i, customShader != null ? customShader : shader);
         }
         for (int i = 0; i < uiParamsCount; i++) {
             bindUiParams(i, customShader != null ? customShader : shader);
         }
-        Arrays.fill(labelStylesArray, null);
         Arrays.fill(uiParamsArray, null);
-        labelStylesCount = 0;
+        msdfTextParamsCount = 0;
         uiParamsCount = 0;
 
         // Set TEXTURE0 as active again before drawing.
@@ -1452,23 +1455,23 @@ public class SpriteBatch implements Batch {
         }
     }
 
-    protected int activateLabelStyle() {
-        if (currentLabelStyle == null) {
+    protected int activateMsdfTextParams() {
+        if (currentMsdfTextParams == null) {
             return -1;
         }
-        for (int i = 0; i < labelStylesCount; i++) {
-            if (currentLabelStyle.equals(labelStylesArray[i])) {
-                currentLabelStyle = null;
+        for (int i = 0; i < msdfTextParamsCount; i++) {
+            if (currentMsdfTextParams.equals(msdfTextParamsArray[i])) {
+                currentMsdfTextParams = null;
                 return i;
             }
         }
-        if (labelStylesCount >= maxMsdfParams - 1) {
+        if (msdfTextParamsCount >= maxMsdfParams - 1) {
             flush();
         }
-        labelStylesArray[labelStylesCount] = currentLabelStyle;
-        labelStylesCount++;
-        currentLabelStyle = null;
-        return labelStylesCount - 1;
+        msdfTextParamsArray[msdfTextParamsCount].update(currentMsdfTextParams);
+        msdfTextParamsCount++;
+        currentMsdfTextParams = null;
+        return msdfTextParamsCount - 1;
     }
 
     protected int activateUiParams(
@@ -1653,10 +1656,18 @@ public class SpriteBatch implements Batch {
         }
     }
 
-    private Label.LabelStyle currentLabelStyle = null;
+    private MsdfTextParams currentMsdfTextParams = null;
 
-    public void setLabelStyle(Label.LabelStyle style) {
-        currentLabelStyle = style;
+    private MsdfTextParams tmpMsdfTextParams = new MsdfTextParams();
+
+    public void setStyle(Label.LabelStyle style) {
+        tmpMsdfTextParams.update(style);
+        currentMsdfTextParams = tmpMsdfTextParams;
+    }
+
+    public void setStyle(TextField.TextFieldStyle style, boolean isMessageText) {
+        tmpMsdfTextParams.update(style, isMessageText);
+        currentMsdfTextParams = tmpMsdfTextParams;
     }
 
     private UiParams currentUiParams = null;

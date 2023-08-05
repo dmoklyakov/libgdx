@@ -36,6 +36,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class MsdfFont implements Disposable {
 
+    public static final float WEIGHT_LIGHT = -0.1f;
+    public static final float WEIGHT_REGULAR = 0f;
+    public static final float WEIGHT_BOLD = 0.1f;
+
     /**
      * The underlying bitmap font, never null.
      */

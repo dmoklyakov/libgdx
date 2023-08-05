@@ -274,10 +274,9 @@ public class Label extends Widget {
 		cache.tint(color);
 		cache.setPosition(getX(), getY());
 		if (batch instanceof SpriteBatch) {
-			((SpriteBatch) batch).setLabelStyle(style);
+			((SpriteBatch) batch).setStyle(style);
 		}
 		cache.draw(batch);
-		batch.setShader(null);
 	}
 
 	public float getPrefWidth () {
@@ -654,8 +653,9 @@ public class Label extends Widget {
 			return shadowIntensity;
 		}
 
-		public void setShadowIntensity(float shadowIntensity) {
+		public LabelStyle setShadowIntensity(float shadowIntensity) {
 			this.shadowIntensity = shadowIntensity;
+			return this;
 		}
 
 		@Override

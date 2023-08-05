@@ -290,7 +290,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		flushIfFull();
 		final float ti = activateTexture(texture);
-		final float lsi = activateLabelStyle();
+		final float mpi = activateMsdfTextParams();
 
 		// bottom left and top right corner points relative to origin
 		final float worldOriginX = x + originX;
@@ -391,7 +391,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u;
 		vertices[idx++] = v;
 		if (maxTextureUnits > 1) {vertices[idx++] = ti;}
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x2 + t.m01 * y2 + t.m02;
@@ -400,7 +400,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u;
 		vertices[idx++] = v2;
 		if (maxTextureUnits > 1) {vertices[idx++] = ti;}
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x3 + t.m01 * y3 + t.m02;
@@ -409,7 +409,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u2;
 		vertices[idx++] = v2;
 		if (maxTextureUnits > 1) {vertices[idx++] = ti;}
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x4 + t.m01 * y4 + t.m02;
@@ -418,7 +418,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u2;
 		vertices[idx++] = v;
 		if (maxTextureUnits > 1) {vertices[idx++] = ti;}
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 	}
@@ -429,7 +429,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		flushIfFull();
 		final float ti = activateTexture(region.getTexture());
-		final float lsi = activateLabelStyle();
+		final float mpi = activateMsdfTextParams();
 
 		// bottom left and top right corner points relative to origin
 		final float worldOriginX = x + originX;
@@ -541,7 +541,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u1;
 		vertices[idx++] = v1;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x2 + t.m01 * y2 + t.m02;
@@ -550,7 +550,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u2;
 		vertices[idx++] = v2;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x3 + t.m01 * y3 + t.m02;
@@ -559,7 +559,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u3;
 		vertices[idx++] = v3;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x4 + t.m01 * y4 + t.m02;
@@ -568,7 +568,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u4;
 		vertices[idx++] = v4;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 	}
@@ -578,7 +578,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		flushIfFull();
 		final float ti = activateTexture(region.getTexture());
-		final float lsi = activateLabelStyle();
+		final float mpi = activateMsdfTextParams();
 
 		Affine2 t = transform;
 
@@ -611,7 +611,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u;
 		vertices[idx++] = v;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x2 + t.m01 * y2 + t.m02;
@@ -620,7 +620,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u;
 		vertices[idx++] = v2;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x3 + t.m01 * y3 + t.m02;
@@ -629,7 +629,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u2;
 		vertices[idx++] = v2;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 		vertices[idx++] = t.m00 * x4 + t.m01 * y4 + t.m02;
@@ -638,7 +638,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 		vertices[idx++] = u2;
 		vertices[idx++] = v;
 		if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-		vertices[idx++] = lsi;
+		vertices[idx++] = mpi;
 		vertices[idx++] = upi;
 
 	}
@@ -648,7 +648,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		flushIfFull();
 		final float ti = activateTexture(texture);
-		final float lsi = activateLabelStyle();
+		final float mpi = activateMsdfTextParams();
 		float xMin = Float.MAX_VALUE;
 		float yMin = Float.MAX_VALUE;
 		float xMax = -Float.MAX_VALUE;
@@ -677,7 +677,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 				vertices[idx++] = spriteVertices[offset + 3]; // u
 				vertices[idx++] = spriteVertices[offset + 4]; // v
 				if (maxTextureUnits > 1) { vertices[idx++] = ti; }
-				vertices[idx++] = lsi;
+				vertices[idx++] = mpi;
 				vertices[idx++] = upi;
 
 				offset += Sprite.VERTEX_SIZE;
