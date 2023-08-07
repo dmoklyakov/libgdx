@@ -241,6 +241,13 @@ public class BitmapFontCache {
 		color.set(r, g, b, a);
 	}
 
+	public boolean hasGlyphs () {
+		for (int j = 0, n = pageVertices.length; j < n; j++) {
+			if (idx[j] > 0) return true;
+		}
+		return false;
+	}
+
 	public void draw (Batch spriteBatch) {
 		Array<TextureRegion> regions = font.getRegions();
 		for (int j = 0, n = pageVertices.length; j < n; j++) {

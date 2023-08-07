@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout.GlyphRun;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -92,8 +93,7 @@ public class TextField extends Widget implements Disableable {
 	protected final FloatArray glyphPositions = new FloatArray();
 
 	TextFieldStyle style;
-	
-	private MsdfTextParams msdfTextParams;
+
 	private String messageText;
 	protected CharSequence displayText;
 	Clipboard clipboard;
@@ -389,15 +389,21 @@ public class TextField extends Widget implements Disableable {
 	}
 
 	protected void drawText (Batch batch, MsdfFont font, float x, float y) {
-		if (batch instanceof SpriteBatch) {
+		BitmapFontCache cache = font.getBitmapFont().getCache();
+		cache.clear();
+		cache.addText(displayText, x + textOffset, y, visibleTextStart, visibleTextEnd, 0, Align.left, false); // TODO: not optimal to do it this way.
+		if (cache.hasGlyphs() && batch instanceof SpriteBatch) {
 			((SpriteBatch) batch).setStyle(style, false);
 		}
 		font.draw(batch, displayText, x + textOffset, y, visibleTextStart, visibleTextEnd, 0, Align.left, false);
 	}
 
 	protected void drawMessageText (Batch batch, MsdfFont font, float x, float y, float maxWidth) {
-		if (batch instanceof SpriteBatch) {
-			((SpriteBatch) batch).setStyle(style, true);
+		BitmapFontCache cache = font.getBitmapFont().getCache();
+		cache.clear();
+		cache.addText(messageText, x, y, 0, messageText.length(), maxWidth, textHAlign, false, "..."); // TODO: not optimal to do it this way.
+		if (cache.hasGlyphs() && batch instanceof SpriteBatch) {
+			((SpriteBatch) batch).setStyle(style, false);
 		}
 		font.draw(batch, messageText, x, y, 0, messageText.length(), maxWidth, textHAlign, false, "...");
 	}

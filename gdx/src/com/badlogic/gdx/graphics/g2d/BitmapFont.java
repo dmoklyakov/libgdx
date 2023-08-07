@@ -178,7 +178,6 @@ public class BitmapFont implements Disposable {
 
 		load(data);
 	}
-
 	protected void load (BitmapFontData data) {
 		for (Glyph[] page : data.glyphs) {
 			if (page == null) continue;

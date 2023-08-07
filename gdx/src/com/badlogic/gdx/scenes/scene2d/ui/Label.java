@@ -273,7 +273,7 @@ public class Label extends Widget {
 		}
 		cache.tint(color);
 		cache.setPosition(getX(), getY());
-		if (batch instanceof SpriteBatch) {
+		if (cache.hasGlyphs() && batch instanceof SpriteBatch) {
 			((SpriteBatch) batch).setStyle(style);
 		}
 		cache.draw(batch);
@@ -352,7 +352,7 @@ public class Label extends Widget {
 	}
 
 	public void setFontSize(float size) {
-		style.size = size;
+		style.setSize(size);
 		setFontScale(style.getSize() / style.font.getGlyphSize());
 	}
 
