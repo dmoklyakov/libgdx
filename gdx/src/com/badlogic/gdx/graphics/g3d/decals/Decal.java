@@ -560,11 +560,15 @@ public class Decal {
 
 	/** Sets the blending parameters for this decal
 	 * 
-	 * @param srcBlendFactor Source blend factor used by glBlendFunc
-	 * @param dstBlendFactor Destination blend factor used by glBlendFunc */
-	public void setBlending (int srcBlendFactor, int dstBlendFactor) {
+	 * @param srcBlendFactor Source blend factor used by glBlendFuncSeparate
+	 * @param dstBlendFactor Destination blend factor used by glBlendFunc Separate
+	 * @param srcAlphaBlendFactor Source alpha blend factor used by glBlendFuncSeparate
+	 * @param dstAlphaBlendFactor Destination alpha blend factor used by glBlendFuncSeparate */
+	public void setBlending (int srcBlendFactor, int dstBlendFactor, int srcAlphaBlendFactor, int dstAlphaBlendFactor) {
 		material.srcBlendFactor = srcBlendFactor;
+		material.srcAlphaBlendFactor = srcAlphaBlendFactor;
 		material.dstBlendFactor = dstBlendFactor;
+		material.dstAlphaBlendFactor = dstAlphaBlendFactor;
 	}
 
 	public DecalMaterial getMaterial () {
@@ -621,8 +625,14 @@ public class Decal {
 	 * @param textureRegion Texture region to use
 	 * @return Created decal */
 	public static Decal newDecal (TextureRegion textureRegion) {
-		return newDecal(textureRegion.getRegionWidth(), textureRegion.getRegionHeight(), textureRegion, DecalMaterial.NO_BLEND,
-			DecalMaterial.NO_BLEND);
+		return newDecal(textureRegion.getRegionWidth(),
+				textureRegion.getRegionHeight(),
+				textureRegion,
+				DecalMaterial.NO_BLEND,
+				DecalMaterial.NO_BLEND,
+				DecalMaterial.NO_BLEND,
+				DecalMaterial.NO_BLEND
+				);
 	}
 
 	/** Creates a decal assuming the dimensions of the texture region and adding transparency
@@ -631,9 +641,14 @@ public class Decal {
 	 * @param hasTransparency Whether or not this sprite will be treated as having transparency (transparent png, etc.)
 	 * @return Created decal */
 	public static Decal newDecal (TextureRegion textureRegion, boolean hasTransparency) {
-		return newDecal(textureRegion.getRegionWidth(), textureRegion.getRegionHeight(), textureRegion,
-			hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
-			hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND);
+		return newDecal(textureRegion.getRegionWidth(),
+				textureRegion.getRegionHeight(),
+				textureRegion,
+				hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND
+		);
 	}
 
 	/** Creates a decal using the region for texturing
@@ -645,7 +660,7 @@ public class Decal {
 	// TODO : it would be convenient if {@link com.badlogic.gdx.graphics.Texture} had a getFormat() method to assume transparency
 // from RGBA,..
 	public static Decal newDecal (float width, float height, TextureRegion textureRegion) {
-		return newDecal(width, height, textureRegion, DecalMaterial.NO_BLEND, DecalMaterial.NO_BLEND);
+		return newDecal(width, height, textureRegion, DecalMaterial.NO_BLEND, DecalMaterial.NO_BLEND, DecalMaterial.NO_BLEND, DecalMaterial.NO_BLEND);
 	}
 
 	/** Creates a decal using the region for texturing
@@ -656,8 +671,15 @@ public class Decal {
 	 * @param hasTransparency Whether or not this sprite will be treated as having transparency (transparent png, etc.)
 	 * @return Created decal */
 	public static Decal newDecal (float width, float height, TextureRegion textureRegion, boolean hasTransparency) {
-		return newDecal(width, height, textureRegion, hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
-			hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND);
+		return newDecal(
+				width,
+				height,
+				textureRegion,
+				hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_SRC_ALPHA : DecalMaterial.NO_BLEND,
+				hasTransparency ? GL20.GL_ONE_MINUS_SRC_ALPHA : DecalMaterial.NO_BLEND
+		);
 	}
 
 	/** Creates a decal using the region for texturing and the specified blending parameters for blending
@@ -668,10 +690,16 @@ public class Decal {
 	 * @param srcBlendFactor Source blend used by glBlendFunc
 	 * @param dstBlendFactor Destination blend used by glBlendFunc
 	 * @return Created decal */
-	public static Decal newDecal (float width, float height, TextureRegion textureRegion, int srcBlendFactor, int dstBlendFactor) {
+	public static Decal newDecal (float width,
+								  float height,
+								  TextureRegion textureRegion,
+								  int srcBlendFactor,
+								  int dstBlendFactor,
+								  int srcAlphaBlendFactor,
+								  int dstAlphaBlendFactor) {
 		Decal decal = new Decal();
 		decal.setTextureRegion(textureRegion);
-		decal.setBlending(srcBlendFactor, dstBlendFactor);
+		decal.setBlending(srcBlendFactor, dstBlendFactor, srcAlphaBlendFactor, dstAlphaBlendFactor);
 		decal.dimensions.x = width;
 		decal.dimensions.y = height;
 		decal.setColor(1, 1, 1, 1);
@@ -687,11 +715,17 @@ public class Decal {
 	 * @param dstBlendFactor Destination blend used by glBlendFunc
 	 * @param material Custom decal material
 	 * @return Created decal */
-	public static Decal newDecal (float width, float height, TextureRegion textureRegion, int srcBlendFactor, int dstBlendFactor,
-		DecalMaterial material) {
+	public static Decal newDecal (float width,
+								  float height,
+								  TextureRegion textureRegion,
+								  int srcBlendFactor,
+								  int dstBlendFactor,
+								  int srcAlphaBlendFactor,
+								  int dstAlphaBlendFactor,
+								  DecalMaterial material) {
 		Decal decal = new Decal(material);
 		decal.setTextureRegion(textureRegion);
-		decal.setBlending(srcBlendFactor, dstBlendFactor);
+		decal.setBlending(srcBlendFactor, dstBlendFactor, srcAlphaBlendFactor, dstAlphaBlendFactor);
 		decal.dimensions.x = width;
 		decal.dimensions.y = height;
 		decal.setColor(1, 1, 1, 1);

@@ -25,12 +25,14 @@ public class DecalMaterial {
 	protected TextureRegion textureRegion;
 	protected int srcBlendFactor;
 	protected int dstBlendFactor;
+	protected int srcAlphaBlendFactor;
+	protected int dstAlphaBlendFactor;
 
-	/** Binds the material's texture to the OpenGL context and changes the glBlendFunc to the values used by it. */
+	/** Binds the material's texture to the OpenGL context and changes the glBlendFuncSeparate to the values used by it. */
 	public void set () {
 		textureRegion.getTexture().bind(0);
 		if (!isOpaque()) {
-			Gdx.gl.glBlendFunc(srcBlendFactor, dstBlendFactor);
+			Gdx.gl.glBlendFuncSeparate(srcBlendFactor, dstBlendFactor, srcAlphaBlendFactor, dstAlphaBlendFactor);
 		}
 	}
 
@@ -45,6 +47,14 @@ public class DecalMaterial {
 
 	public int getDstBlendFactor () {
 		return dstBlendFactor;
+	}
+
+	public int getSrcAlphaBlendFactor () {
+		return srcAlphaBlendFactor;
+	}
+
+	public int getDstAlphaBlendFactor () {
+		return dstAlphaBlendFactor;
 	}
 
 	@Override
