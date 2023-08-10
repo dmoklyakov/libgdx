@@ -1,8 +1,12 @@
 #ifdef GL_ES
-#define LOWP lowp
-precision highp float;
+    #define LOWP lowp
+    #define MEDIUMP mediump
+    #define HIGHP highp
+    precision highp float;
 #else
-#define LOWP
+    #define LOWP
+    #define MEDIUMP
+    #define HIGHP
 #endif
 
 #ifdef GLSL3

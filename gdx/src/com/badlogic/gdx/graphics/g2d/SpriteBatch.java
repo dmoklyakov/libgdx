@@ -1777,12 +1777,26 @@ public class SpriteBatch implements Batch {
     }
 
     public static ShaderProgram createShader(int maxTextureUnits, int maxMsdfParams, int maxUiParams, String vertexShader, String fragmentShader) {
-        String prependPart1 = Gdx.app.getType() == Application.ApplicationType.Desktop ? "#version 150\n" : "#version 100\n";
-        String prependPart2 = Gdx.graphics.isGL30Available() ? "#define GLSL3\n" : "";
-        String prependPart3 = maxTextureUnits > 1 ? "#define TEXTURE_ARRAY\n#define MAX_TEXTURE_UNITS " + maxTextureUnits + "\n" : "";
-        String prependPart4 = "#define MAX_MSDF_PARAMS " + maxMsdfParams + "\n";
-        String prependPart5 = "#define MAX_UI_PARAMS " + maxUiParams + "\n";
-        String prependText = prependPart1 + prependPart2 + prependPart3 + prependPart4 + prependPart5;
+        String prependPart1;
+        boolean isDesktop = Gdx.app.getType() == Application.ApplicationType.Desktop;
+        boolean isGl30 = Gdx.graphics.isGL30Available();
+        if (isDesktop) {
+            if (isGl30) {
+                prependPart1 = "#version 150\n#define GLSL3\n";
+            } else {
+                prependPart1 = "#version 120\n";
+            }
+        } else {
+            if (isGl30) {
+                prependPart1 = "#version 300 es\n#define GLSL3\n";
+            } else {
+                prependPart1 = "#version 100\n";
+            }
+        }
+        String prependPart2 = maxTextureUnits > 1 ? "#define TEXTURE_ARRAY\n#define MAX_TEXTURE_UNITS " + maxTextureUnits + "\n" : "";
+        String prependPart3 = "#define MAX_MSDF_PARAMS " + maxMsdfParams + "\n";
+        String prependPart4 = "#define MAX_UI_PARAMS " + maxUiParams + "\n";
+        String prependText = prependPart1 + prependPart2 + prependPart3 + prependPart4;
         ShaderProgram.prependVertexCode = prependText;
         ShaderProgram.prependFragmentCode = prependText;
 
