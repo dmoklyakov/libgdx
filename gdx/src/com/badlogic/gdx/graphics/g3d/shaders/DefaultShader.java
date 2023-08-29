@@ -646,18 +646,18 @@ public class DefaultShader extends BaseShader {
 		}
 	}
 
-	private static final boolean and (final long mask, final long flag) {
+	public static final boolean and (final long mask, final long flag) {
 		return (mask & flag) == flag;
 	}
 
-	private static final boolean or (final long mask, final long flag) {
+	public static final boolean or (final long mask, final long flag) {
 		return (mask & flag) != 0;
 	}
 
 	private final static Attributes tmpAttributes = new Attributes();
 
 	// TODO: Perhaps move responsibility for combining attributes to RenderableProvider?
-	private static final Attributes combineAttributes (final Renderable renderable) {
+	public static Attributes combineAttributes (final Renderable renderable) {
 		tmpAttributes.clear();
 		if (renderable.environment != null) tmpAttributes.set(renderable.environment);
 		if (renderable.material != null) tmpAttributes.set(renderable.material);

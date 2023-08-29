@@ -19,6 +19,7 @@ package com.badlogic.gdx.tests.gles3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SimpleSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
@@ -47,7 +48,7 @@ public class UniformBufferObjectsTest extends GdxTest {
 	Table table;
 
 	RandomXS128 random;
-	SpriteBatch batch;
+	SimpleSpriteBatch batch;
 	Texture texture;
 	ShaderProgram shaderProgram;
 	FloatBuffer uniformBuffer = BufferUtils.newFloatBuffer(16);
@@ -60,7 +61,7 @@ public class UniformBufferObjectsTest extends GdxTest {
 	@Override
 	public void create () {
 		random = new RandomXS128();
-		batch = new SpriteBatch();
+		batch = new SimpleSpriteBatch();
 		texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
 		texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 

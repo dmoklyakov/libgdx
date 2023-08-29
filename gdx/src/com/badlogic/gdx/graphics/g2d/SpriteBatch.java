@@ -1658,7 +1658,7 @@ public class SpriteBatch implements Batch {
 
     private MsdfTextParams currentMsdfTextParams = null;
 
-    private MsdfTextParams tmpMsdfTextParams = new MsdfTextParams();
+    private final MsdfTextParams tmpMsdfTextParams = new MsdfTextParams();
 
     public void setStyle(Label.LabelStyle style) {
         tmpMsdfTextParams.update(style);

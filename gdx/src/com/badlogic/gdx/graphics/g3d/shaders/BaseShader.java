@@ -192,13 +192,6 @@ public abstract class BaseShader implements Shader {
 			}
 		}
 		if (renderable != null) {
-			final VertexAttributes attrs = renderable.meshPart.mesh.getVertexAttributes();
-			final int c = attrs.size();
-			for (int i = 0; i < c; i++) {
-				final VertexAttribute attr = attrs.get(i);
-				final int location = program.getAttributeLocation(attr.alias);
-				if (location >= 0) attributes.put(attr.getKey(), location);
-			}
 			final VertexAttributes iattrs = renderable.meshPart.mesh.getInstancedAttributes();
 			if (iattrs != null) {
 				final int ic = iattrs.size();
@@ -207,6 +200,24 @@ public abstract class BaseShader implements Shader {
 					final int location = program.getAttributeLocation(attr.alias);
 					if (location >= 0) instancedAttributes.put(attr.getKey(), location);
 				}
+			}
+			final VertexAttributes attrs = renderable.meshPart.mesh.getVertexAttributes();
+			final int c = attrs.size();
+			for (int i = 0; i < c; i++) {
+				final VertexAttribute attr = attrs.get(i);
+				if (iattrs != null) {
+					boolean skip = false;
+					for (VertexAttribute iattr : iattrs) {
+						if (iattr.alias.equals(attr.alias)) {
+							// Don't add the attribute if it's already added as an instanced attribute.
+							skip = true;
+							break;
+						}
+					}
+					if (skip) continue;
+				}
+				final int location = program.getAttributeLocation(attr.alias);
+				if (location >= 0) attributes.put(attr.getKey(), location);
 			}
 		}
 	}
